@@ -70,6 +70,18 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "CLI"
+      },
+      {
+        "tab": "MCP"
+      },
+      {
+        "tab": "SDK"
+      },
+      {
+        "tab": "Contributing"
       }
     ],
     "global": {
