@@ -1,52 +1,53 @@
 ---
 title: "Introduction"
-description: "Welcome to Proply documentation"
+description: "Welcome to Proply — account memory for AI agents"
 ---
 
 <Note>
-  Youtube Channel: 
+  Proply is the memory layer that makes your AI agents relationship-aware. Give your agents persistent, structured knowledge about every contact, company, and deal.
 </Note>
 
 <Warning>
-  Looking to integrate with Proply programmatically? Check out the [Public API Documentation ](/api-reference/introduction)
+  Looking to integrate programmatically? Check out the [MCP Server](/mcp/introduction) or the [Public API](/public-api/introduction).
 </Warning>
 
-## What is Proply? 
+## What is Proply?
 
-Get your documentation site up and running in minutes.'
+Proply is **account memory for AI agents**. It gives your agents a persistent, structured understanding of every relationship — who the contact is, what they care about, where they are in the pipeline, and what signals have been observed.
 
-- dd
-- dd
-- dd
+Most CRMs are built for humans clicking through a UI. Proply is built for agents reading and writing context programmatically — through an MCP server your agent calls directly, or a REST API you can wire into any workflow.
 
-<Columns cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/development">
-    Learn how to install the product and start using it. 
+- **People memory** — Private facts about individuals: communication style, preferences, and key context from past interactions
+- **Company memory** — Org-level facts shared across every contact at that company
+- **Pipeline signals** — Activity events from email, LinkedIn, calendar, webhooks, and third-party sources
+- **AI synthesis** — Proply reads the raw signal stream and writes structured summaries back into memory automatically
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/getting-started/quickstart">
+    Get Proply running and connect your first agent in under 10 minutes.
   </Card>
 
-  <Card title="Architecture" icon="code-fork" href="/essentials/settings">
-    Learn the architecture of the product
+  <Card title="How it works" icon="diagram-project" href="/getting-started/how-it-works">
+    Understand the architecture: API server, MCP tools, signal ingestion, and memory layers.
   </Card>
-</Columns>
+</CardGroup>
 
-## 4 things I beliefe in... idk smth like this 
+## Core capabilities
 
-Make your docs work for humans and AI agents alike.
-
-<Columns cols={2}>
-  <Card title="Prompt component" icon="robot" href="/agent-ready/prompt">
-    Embed shareable AI prompts readers can copy or open in Cursor.
+<CardGroup cols={2}>
+  <Card title="MCP Server" icon="robot" href="/mcp/introduction">
+    Ten tools your agent can call: read contact memory, log activity, update pipeline stage, draft proposals, and more.
   </Card>
 
-  <Card title="Visibility" icon="eye" href="/agent-ready/visibility">
-    Show different content to humans and agents reading your docs.
+  <Card title="Signal Providers" icon="bolt" href="/providers/overview">
+    Ingest relationship signals from LinkedIn, Google Calendar, email, HubSpot, and custom webhooks.
   </Card>
 
-  <Card title="Contextual menu" icon="bolt" href="/agent-ready/contextual">
-    Give readers one-click access to Claude, ChatGPT, Cursor, and more.
+  <Card title="Pipeline Stages" icon="chart-line" href="/getting-started/how-it-works">
+    Five behavior-driven stages — from identified to client — with configurable decay rules and AI-powered scoring.
   </Card>
 
-  <Card title="AI coding tools" icon="wand-magic-sparkles" href="/ai-tools/claude-code">
-    Set up Claude Code, Cursor, or Windsurf with Mintlify's skill.
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    Full REST API for reading and writing contacts, memory, activities, and pipeline state from any system.
   </Card>
-</Columns>
+</CardGroup>
