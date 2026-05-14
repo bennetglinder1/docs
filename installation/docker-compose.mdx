@@ -1,4 +1,115 @@
 ---
 title: "Docker Compose"
-description: "Install with Docker Compose"
+description: "Deploy Proply on your own server with Docker Compose"
 ---
+
+The recommended way to self-host Proply. Tested on Ubuntu 24.04 with 2GB RAM and 2 vCPUs.
+
+<Note>
+  You will need a [Supabase](https://supabase.com) project before starting. The free tier is enough to get going.
+</Note>
+
+## What you get
+
+Docker Compose brings up 5 containers:
+
+* **api** — Express API server, identity resolution, signal ingestion
+* **worker** — Background jobs: AI synthesis, live sync, ICP scoring
+* **frontend** — Nginx serving the React SPA
+* **redis** — Session state and job queue
+* **caddy** — Automatic SSL and subdomain routing
+
+## Step 1: Get the files
+
+Clone the repo or download just the production files:
+
+```bash
+git clone https://github.com/bennetglinder1/proply-crm.git
+cd proply-crm
+```
+
+## Step 2: Configure environment
+
+```bash
+cp proply.env.example proply.env
+```
+
+Open `proply.env` and fill in:
+
+```bash
+# ── Domains ────────────────────────────────────────────────────────────────────
+APP_DOMAIN=app.yourdomain.com
+API_DOMAIN=api.yourdomain.com
+
+# ── Supabase — Settings → API ──────────────────────────────────────────────────
+SUPABASE_URL=https://yourproject.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+VITE_SUPABASE_URL=https://yourproject.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJ...
+
+# ── Anthropic ──────────────────────────────────────────────────────────────────
+ANTHROPIC_API_KEY=sk-ant-...
+
+# ── Generate these — run: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+ENCRYPTION_KEY=
+```
+
+## Step 3: Run the database schema
+
+<Warning>
+  Required before first boot. Skip this and the app will start but nothing will work.
+</Warning>
+
+Open your Supabase project → **SQL Editor** → paste and run the full contents of [`supabase/schema.sql`](https://github.com/bennetglinder1/proply-crm/blob/main/supabase/schema.sql).
+
+This creates all tables, RLS policies, indexes, and enables `vector` and `uuid-ossp`.
+
+## Step 4: Point your DNS
+
+Create two A records pointing to your server IP:
+
+| Record | Points to |
+|---|---|
+| `app.yourdomain.com` | Your server IP |
+| `api.yourdomain.com` | Your server IP |
+
+Caddy handles SSL automatically once DNS resolves.
+
+## Step 5: Start
+
+```bash
+docker compose up -d
+```
+
+First run builds all images — takes 2–3 minutes. After that:
+
+* Frontend → `https://app.yourdomain.com`
+* API → `https://api.yourdomain.com`
+
+## Step 6: Connect your first integration
+
+Open `https://app.yourdomain.com` → **Settings → Integrations** and connect at least one signal source to start populating the unified record.
+
+---
+
+## Updating
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+## Logs
+
+```bash
+docker compose logs -f api       # API server
+docker compose logs -f worker    # Background worker
+docker compose logs -f frontend  # Nginx / frontend
+```
+
+## Stopping
+
+```bash
+docker compose down              # stop containers, keep data
+docker compose down -v           # stop and wipe volumes (destructive)
+```
