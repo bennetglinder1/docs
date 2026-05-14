@@ -1,0 +1,52 @@
+---
+title: Instantly
+description: Log email sequence events from Instantly.ai on contact timelines.
+---
+
+## Overview
+
+Instantly sends webhook events for every email action in your sequences. Proply receives them and logs them as activities on matching contacts.
+
+**Update-only** — Instantly events never create new contacts. The contact must already exist in Proply.
+
+## Events logged
+
+| Instantly event | Activity |
+|---|---|
+| `email_sent` | `email_sent` |
+| `reply_received` | `email_received` |
+| `email_opened` | `email_opened` |
+| `email_bounced` | `email_bounced` |
+| `unsubscribed` | `email_bounced` |
+
+## Setup
+
+### 1. Get your webhook URL
+
+Your Instantly webhook endpoint is:
+```
+https://api.yourdomain.com/inbound/instantly/<YOUR_WORKSPACE_ID>
+```
+
+Find your workspace ID in **Settings → Workspace**.
+
+### 2. Add the webhook in Instantly
+
+1. Go to **Settings → Integrations → Webhooks** in Instantly.
+2. Click **Add webhook** and paste your endpoint URL.
+3. Select the events you want: `email_sent`, `reply_received`, `email_opened`, `email_bounced`.
+4. Save.
+
+### 3. Set the HMAC secret (production)
+
+Copy the secret Instantly shows you, then add it to `proply.env`:
+
+```bash
+INSTANTLY_WEBHOOK_SECRET=your-signing-secret
+```
+
+Restart the worker after updating.
+
+## Webhook reference
+
+See [Instantly webhook reference](/webhooks/instantly) for full payload format and field mapping.
