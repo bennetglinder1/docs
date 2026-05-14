@@ -37,7 +37,29 @@
                 "group": "Signal Providers",
                 "pages": [
                   "providers/linkedin",
+                  "providers/google-calendar",
+                  "providers/fireflies",
+                  "providers/fathom",
+                  "providers/rb2b",
+                  "providers/calendly",
                   "providers/webhooks"
+                ]
+              },
+              {
+                "group": "CRM Import",
+                "pages": [
+                  "providers/hubspot",
+                  "providers/pipedrive",
+                  "providers/airtable",
+                  "providers/attio"
+                ]
+              },
+              {
+                "group": "Enrichment",
+                "pages": [
+                  "providers/prospeo",
+                  "providers/apollo",
+                  "providers/signalbase"
                 ]
               }
             ]
