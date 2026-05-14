@@ -1,4 +1,33 @@
 ---
-title: "How to add a new provider"
-description: "Build and register a new provider"
+title: "Add a new provider"
+description: "How to connect a new integration to your workspace"
 ---
+
+All providers are connected through **Settings → Integrations** in the Proply app. You do not need to edit config files for integrations — they are stored per workspace in the database and encrypted at rest.
+
+## OAuth providers (LinkedIn, Google Calendar)
+
+1. Open **Settings → Integrations**
+2. Click **Connect** next to the provider
+3. Complete the OAuth flow — you will be redirected back automatically
+4. The integration is now active for your workspace
+
+## API key providers (Prospeo, Apollo, Signalbase)
+
+1. Get your API key from the provider's dashboard
+2. Open **Settings → Integrations**
+3. Click **Connect** next to the provider and paste the key
+4. Toggle **Use for enrichment** if you want this provider to run on new contacts automatically
+
+## Webhook providers (RB2B, Fireflies, custom)
+
+1. Open **Settings → Integrations → Webhooks**
+2. Copy your workspace webhook URL — format: `https://api.yourdomain.com/inbound/<provider>?workspace_id=<id>`
+3. Paste this URL into the provider's dashboard as the webhook destination
+4. Proply verifies the payload and maps the contact automatically
+
+---
+
+<Note>
+  Integration credentials are encrypted with AES-256-CBC using your `ENCRYPTION_KEY` env var. Never share or rotate this key after setup — doing so will invalidate all stored credentials.
+</Note>
