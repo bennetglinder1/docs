@@ -1,0 +1,42 @@
+---
+title: Fireflies Webhook
+description: Log meeting transcripts from Fireflies.ai on contact timelines.
+---
+
+## Endpoint
+
+```
+POST https://api.yourdomain.com/inbound/fireflies/:workspaceId
+```
+
+## Auth
+
+Set `FIREFLIES_WEBHOOK_SECRET` in `proply.env`. Proply checks `x-proply-signature`.
+
+## Setup in Fireflies
+
+See [Fireflies provider setup](/providers/fireflies) for full webhook configuration steps.
+
+## Payload
+
+```json
+{
+  "meetingId": "meet_abc123",
+  "title": "Discovery call — Acme Corp",
+  "duration": 3120,
+  "transcript_url": "https://app.fireflies.ai/view/...",
+  "summary": "Discussed pricing and integration timeline...",
+  "participants": [
+    { "name": "Jane Smith", "email": "jane@acme.com" },
+    { "name": "You", "email": "you@yourcompany.com" }
+  ]
+}
+```
+
+## Activity logged
+
+`meeting_held` on every matched participant contact.
+
+<Note>
+  Fireflies is **update-only** — participants must already exist as contacts. New contacts are not created from meeting transcripts.
+</Note>
