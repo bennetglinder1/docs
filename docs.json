@@ -42,7 +42,8 @@
                   "providers/fathom",
                   "providers/rb2b",
                   "providers/calendly",
-                  "providers/webhooks"
+                  "providers/webhooks",
+                  "providers/smtp"
                 ]
               },
               {
