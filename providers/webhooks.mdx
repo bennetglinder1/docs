@@ -1,0 +1,110 @@
+---
+title: "Webhooks"
+description: "Push any signal into Proply from any system"
+---
+
+The custom webhook endpoint lets you log a signal for any contact from any system — your own code, a Zapier zap, a sequence tool, or anything that can make an HTTP request.
+
+## Endpoint
+
+```
+POST https://api.yourdomain.com/api/v1/capture
+```
+
+**Authentication:** API key in the `Authorization` header.
+
+```bash
+Authorization: Bearer your-api-key
+```
+
+Generate an API key under **Settings → API Keys** in the app.
+
+## Request body
+
+```json
+{
+  "email": "sarah@acmecorp.com",
+  "type": "email_sent",
+  "description": "Sent follow-up after demo",
+  "source": "smartlead",
+  "occurred_at": "2026-05-14T10:30:00Z",
+  "metadata": {
+    "subject": "Following up on our demo",
+    "campaign_id": "camp_abc123"
+  }
+}
+```
+
+### Fields
+
+| Field | Required | Description |
+|---|---|---|
+| `email` | Yes* | Contact email. Either `email` or `contact_id` required. |
+| `contact_id` | Yes* | Proply contact UUID. Either `email` or `contact_id` required. |
+| `type` | Yes | Activity type — see list below. |
+| `description` | No | Human-readable summary of the event. |
+| `source` | No | Where the signal came from. Defaults to `agent`. |
+| `occurred_at` | No | ISO 8601 timestamp. Defaults to now. |
+| `metadata` | No | Any additional key-value data stored with the event. |
+
+### Activity types
+
+Use one of these values for `type`:
+
+| Type | Meaning |
+|---|---|
+| `email_sent` | Outbound email sent |
+| `email_reply` | Contact replied to an email |
+| `email_open` | Contact opened an email |
+| `call_completed` | Call held with contact |
+| `meeting_held` | Meeting completed |
+| `linkedin_message` | LinkedIn message sent or received |
+| `sequence_enrolled` | Contact enrolled in a sequence |
+| `sequence_replied` | Contact replied to a sequence |
+| `website_visit` | Contact visited your website |
+| `proposal_sent` | Proposal sent to contact |
+| `proposal_viewed` | Contact viewed the proposal |
+| `note` | Manual note |
+| `custom` | Any other event — describe in `description` |
+
+## Response
+
+```json
+{
+  "activity": {
+    "id": "act_abc123",
+    "activity_type": "email_sent",
+    "source": "smartlead",
+    "occurred_at": "2026-05-14T10:30:00Z"
+  },
+  "contact_id": "con_xyz789",
+  "stage_before": "aware",
+  "stage_after": "interested"
+}
+```
+
+The response includes `stage_before` and `stage_after` — Proply may automatically advance the contact's pipeline stage based on the signal.
+
+## Example — curl
+
+```bash
+curl -X POST https://api.yourdomain.com/api/v1/capture \
+  -H "Authorization: Bearer your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "sarah@acmecorp.com",
+    "type": "email_reply",
+    "description": "Replied asking for pricing",
+    "source": "smartlead"
+  }'
+```
+
+## Example — Smartlead / Instantly
+
+In your sequence tool's webhook settings, set:
+
+* **URL:** `https://api.yourdomain.com/api/v1/capture`
+* **Method:** POST
+* **Header:** `Authorization: Bearer your-api-key`
+* Map `lead_email` → `email`
+* Map event type → `type` (e.g. `reply_received` → `email_reply`)
