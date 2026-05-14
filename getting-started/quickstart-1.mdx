@@ -1,29 +1,39 @@
 ---
 title: "Quickstart"
-description: "Get Proply running and connect your first integration in under 15 minutes"
+description: "Get Proply running locally and connect your first integration in under 15 minutes"
 ---
+
+<Note>
+  This guide is for **local development**. To deploy on a server, see [Docker Compose](/installation/docker-compose).
+</Note>
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) installed (for production)
-- [Node.js 20+](https://nodejs.org) and [pnpm](https://pnpm.io) (for local dev)
-- A [Supabase](https://supabase.com) project — free tier works
-- An [Anthropic API key](https://console.anthropic.com)
+* [Node.js 20+](https://nodejs.org) and [pnpm](https://pnpm.io) — `npm install -g pnpm`
+* [Docker](https://docs.docker.com/get-docker/) — used for Redis only
+* A [Supabase](https://supabase.com) project — free tier works
+* An [Anthropic API key](https://console.anthropic.com)
 
 ---
 
-## Step 1: Clone and configure
+## Step 1: Clone and install
 
 ```bash
 git clone https://github.com/bennetglinder1/proply-crm.git
 cd proply-crm
+pnpm install
+```
+
+## Step 2: Configure environment
+
+```bash
 cp .env.example .env
 ```
 
-Open `.env` and fill in the required values:
+Open `.env` and fill in:
 
 ```bash
-# Supabase — from your Supabase project → Settings → API
+# Supabase — Settings → API
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
@@ -33,45 +43,43 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 # Anthropic
 ANTHROPIC_API_KEY=sk-ant-...
 
-# Generate these with the commands below
+# Generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ENCRYPTION_KEY=
 API_SECRET=
 ```
 
-Generate `ENCRYPTION_KEY` and `API_SECRET`:
-
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-# run twice — paste first output into ENCRYPTION_KEY, second into API_SECRET
-```
-
-## Step 2: Run the database schema
+## Step 3: Run the database schema
 
 <Warning>
-  This step is required. Without it the app will start but nothing will work.
+  Required on first setup. Skip this and the app will start but nothing will work.
 </Warning>
 
-Open your Supabase project → **SQL Editor** → paste and run the contents of [`supabase/schema.sql`](https://github.com/bennetglinder1/proply-crm/blob/main/supabase/schema.sql).
+Open your Supabase project → **SQL Editor** → paste and run the full contents of [`supabase/schema.sql`](https://github.com/bennetglinder1/proply-crm/blob/main/supabase/schema.sql).
 
-This creates all tables, indexes, RLS policies, and enables the `vector` and `uuid-ossp` extensions.
-
-## Step 3: Install and start
+## Step 4: Start Redis
 
 ```bash
-pnpm install
+docker compose -f docker-compose.dev.yaml up -d
+```
+
+This starts Redis on `localhost:6379`. The API and worker need it to run.
+
+## Step 5: Start the app
+
+```bash
 pnpm dev
 ```
 
-This starts all four services in parallel:
+Starts all four services in parallel:
 
 | Service | URL | What it does |
 |---|---|---|
-| API server | `http://localhost:3000` | Core REST API, identity resolution, signal ingestion |
+| API | `http://localhost:3000` | REST API, identity resolution, signal ingestion |
 | Frontend | `http://localhost:5173` | Web UI |
 | MCP server | `http://localhost:3001` | Agent tool interface |
-| Worker | — | Background jobs: AI synthesis, sync, scoring |
+| Worker | background | AI synthesis, live sync, ICP scoring |
 
-## Step 4: Connect your first integration
+## Step 6: Connect your first integration
 
 Open `http://localhost:5173` → **Settings → Integrations** and connect at least one source:
 
@@ -90,7 +98,7 @@ Open `http://localhost:5173` → **Settings → Integrations** and connect at le
   </Card>
 </CardGroup>
 
-## Step 5: Connect your AI agent via MCP
+## Step 7: Connect your AI agent via MCP
 
 Add Proply to your `mcp.json` (Claude Desktop, Cursor, or any MCP host):
 
@@ -123,7 +131,7 @@ Generate your API key under **Settings → API Keys**.
     Full reference for all MCP tools your agents can call.
   </Card>
   <Card title="Production deploy" icon="server" href="/installation/docker-compose">
-    Deploy on your own infrastructure with Docker Compose.
+    Deploy on your own server with Docker Compose.
   </Card>
   <Card title="Public API" icon="code" href="/public-api/introduction">
     Integrate via REST API from any language or platform.
