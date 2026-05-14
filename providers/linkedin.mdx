@@ -1,4 +1,75 @@
 ---
 title: "LinkedIn"
-description: "How to add LinkedIn to your system"
+description: "Ingest LinkedIn messages and connection requests via Unipile"
 ---
+
+LinkedIn signals are ingested through [Unipile](https://unipile.com) — a LinkedIn automation API that handles OAuth on behalf of your team members.
+
+<Note>
+  Unipile requires a paid account. Their Starter plan covers one LinkedIn account. [See Unipile pricing](https://unipile.com/pricing).
+</Note>
+
+## What gets ingested
+
+* Incoming LinkedIn messages
+* Connection request accepted / declined
+* LinkedIn profile visits (if enabled in Unipile)
+
+Each signal is matched to a contact in Proply via LinkedIn URL or name+company. New contacts are created automatically if no match is found.
+
+---
+
+## Step 1: Create a Unipile account
+
+Sign up at [app.unipile.com](https://app.unipile.com). After signup you will land in the Unipile dashboard.
+
+## Step 2: Get your API key and DSN
+
+1. Go to **Settings → API Keys** in the Unipile dashboard
+2. Create a new API key and copy it
+3. Note your **DSN** — shown in the dashboard as something like `api1.unipile.com:13465`
+
+## Step 3: Add to your environment
+
+**Local dev** — add to `.env`:
+
+```bash
+UNIPILE_API_KEY=your-unipile-api-key
+UNIPILE_DSN=api1.unipile.com:13465
+```
+
+**Docker Compose** — add to `proply.env`:
+
+```bash
+UNIPILE_API_KEY=your-unipile-api-key
+UNIPILE_DSN=api1.unipile.com:13465
+```
+
+Then restart the API server.
+
+## Step 4: Authorize your LinkedIn account in-app
+
+1. Open Proply → **Settings → Integrations → LinkedIn**
+2. Click **Connect LinkedIn**
+3. You will be redirected to a Unipile-hosted OAuth page — log in with your LinkedIn credentials
+4. After authorizing, you will be redirected back to Proply
+5. The integration status will show **Connected**
+
+<Warning>
+  Unipile auth links expire after 1 hour. If the OAuth page shows an error, return to Settings → Integrations and click Connect again to generate a fresh link.
+</Warning>
+
+## Step 5: Verify
+
+Send yourself a LinkedIn message from another account. Within a few minutes, the message should appear in that contact's activity timeline in Proply.
+
+---
+
+## Troubleshooting
+
+| Error | Cause | Fix |
+|---|---|---|
+| `UNIPILE_DSN not configured` | DSN env var missing | Add `UNIPILE_DSN` to your env and restart |
+| `Unipile auth link failed (401)` | API key invalid or expired | Regenerate the key in Unipile dashboard |
+| Auth link expired | Waited more than 1 hour | Click Connect again in Settings |
+| Contact not matched | LinkedIn URL not on file | Manually add the LinkedIn URL to the contact record |
