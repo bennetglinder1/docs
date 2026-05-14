@@ -1,0 +1,56 @@
+---
+title: Stripe
+description: Log payments from Stripe and auto-promote paying contacts to client stage.
+---
+
+## Overview
+
+Connect your Stripe account to Proply and every successful payment from a known contact is logged as a `payment_received` activity. Proply automatically promotes that contact to **Client** stage.
+
+**Update-only** — payments never create new contacts. The customer email must match an existing contact.
+
+## Events logged
+
+| Stripe event | Activity |
+|---|---|
+| `payment_intent.succeeded` | `payment_received` |
+| `invoice.paid` | `payment_received` |
+| `charge.succeeded` | `payment_received` |
+
+## Setup
+
+### 1. Get your webhook URL
+
+Your Stripe webhook endpoint is:
+```
+https://api.yourdomain.com/inbound/stripe/<YOUR_WORKSPACE_ID>
+```
+
+### 2. Add the webhook in Stripe
+
+1. Go to **Developers → Webhooks → Add endpoint** in Stripe.
+2. Paste your endpoint URL.
+3. Select events: `payment_intent.succeeded`, `invoice.paid`, `charge.succeeded`.
+4. Click **Add endpoint**.
+
+### 3. Set the signing secret
+
+Copy the **Signing secret** Stripe shows you (starts with `whsec_`), then add it to `proply.env`:
+
+```bash
+STRIPE_INBOUND_WEBHOOK_SECRET=whsec_your-signing-secret
+```
+
+Restart the worker after updating.
+
+## How contact matching works
+
+Proply looks for the customer email in this order:
+1. `receipt_email`
+2. `customer_email`
+3. `customer_details.email`
+4. `billing_details.email`
+
+## Webhook reference
+
+See [Stripe webhook reference](/webhooks/stripe) for full payload details.
