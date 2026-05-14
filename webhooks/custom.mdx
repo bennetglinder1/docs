@@ -1,0 +1,78 @@
+---
+title: Custom Capture
+description: Log any signal from any source using the authenticated capture API.
+---
+
+## Endpoint
+
+```
+POST https://api.yourdomain.com/api/v1/capture
+```
+
+**Auth:** `Authorization: Bearer <YOUR_API_KEY>`
+
+Unlike the inbound webhook endpoints, the capture API requires an API key. Generate one in **Settings → API Keys**.
+
+## Request body
+
+```json
+{
+  "email": "prospect@company.com",
+  "type": "email_sent",
+  "source": "smtp",
+  "description": "Outbound: Introduction email",
+  "external_id": "msg_<message-id>",
+  "occurred_at": "2026-05-14T10:00:00Z",
+  "metadata": {
+    "subject": "Introduction to Proply",
+    "campaign": "May Outreach"
+  }
+}
+```
+
+## Fields
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `email` | string | Yes* | Contact email. Required if `contact_id` not set. |
+| `contact_id` | UUID | Yes* | Contact UUID. Required if `email` not set. |
+| `type` | string | Yes | Activity type — see table below |
+| `source` | string | No | Source identifier (e.g. `smtp`, `custom`, `zapier`) |
+| `description` | string | No | Human-readable label shown on the timeline |
+| `external_id` | string | No | Deduplication key — safe to retry |
+| `occurred_at` | ISO 8601 | No | Defaults to `now()` |
+| `metadata` | object | No | Any extra key-value pairs |
+
+## Activity types
+
+| `type` | Description |
+|---|---|
+| `email_sent` | Outbound email |
+| `email_received` | Inbound email / reply |
+| `email_opened` | Open tracked |
+| `email_bounced` | Bounce |
+| `call` | Phone call |
+| `meeting_scheduled` | Meeting booked |
+| `meeting_held` | Meeting completed |
+| `website_visit` | Page view |
+| `linkedin_message` | LinkedIn DM |
+| `note` | Manual note |
+| `custom` | Anything else |
+
+## Response
+
+```json
+{
+  "ok": true,
+  "activity_id": "uuid",
+  "contact_id": "uuid",
+  "stage_before": "identified",
+  "stage_after": "aware"
+}
+```
+
+`stage_before` / `stage_after` tell you if this signal advanced the contact's pipeline stage.
+
+## Example: Zapier
+
+Use the custom capture endpoint in a Zapier webhook action to log events from any tool Proply doesn't natively support.
