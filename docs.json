@@ -43,7 +43,9 @@
                   "providers/rb2b",
                   "providers/calendly",
                   "providers/webhooks",
-                  "providers/smtp"
+                  "providers/smtp",
+                  "providers/instantly",
+                  "providers/stripe"
                 ]
               },
               {
@@ -63,6 +65,24 @@
                   "providers/signalbase"
                 ]
               }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Webhooks",
+        "groups": [
+          {
+            "group": "Webhooks",
+            "pages": [
+              "webhooks/overview",
+              "webhooks/linkedin",
+              "webhooks/instantly",
+              "webhooks/fireflies",
+              "webhooks/rb2b",
+              "webhooks/calendly",
+              "webhooks/stripe",
+              "webhooks/custom"
             ]
           }
         ]
