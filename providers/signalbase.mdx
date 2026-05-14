@@ -1,0 +1,61 @@
+---
+title: Signalbase
+description: Ingest intent signals, funding events, and job changes from Signalbase into your contact timelines.
+---
+
+## Overview
+
+Signalbase provides public intent signals — funding rounds, job changes, hiring signals, and technology usage data. Proply ingests these as activity events on matching contacts and companies, enriching timeline context for your agents.
+
+## Setup
+
+Signalbase signals are ingested via Proply's public webhook endpoint. You configure Signalbase to POST to your Proply ingest URL with your workspace token.
+
+### 1. Get your webhook URL
+
+In Proply, go to **Settings → Integrations → Signalbase** (or **Webhooks**) and copy your ingest URL and token.
+
+Your URL looks like:
+
+```
+https://api.yourdomain.com/api/public/signals/ingest
+```
+
+### 2. Configure Signalbase
+
+In your Signalbase dashboard, create a new webhook destination and set:
+
+- **URL:** your Proply ingest URL
+- **Method:** POST
+- **Payload template:**
+
+```json
+{
+  "workspace_id": "YOUR_WORKSPACE_ID",
+  "token": "YOUR_TOKEN",
+  "source": "signalbase",
+  "company_name": "{{company_name}}",
+  "domain": "{{domain}}"
+}
+```
+
+### 3. Done
+
+Signalbase events will appear on matching company records as `intent_signal` activities.
+
+## Signal types
+
+| Signalbase event | Proply `activity_type` | Notes |
+|---|---|---|
+| Funding round | `funding_event` | Logged on company record |
+| Job change | `job_change` | Matched to contact if email known |
+| Hiring signal | `hiring_signal` | Logged on company record |
+| Intent data | `intent_signal` | Logged on company record |
+
+## Identity matching
+
+Signalbase signals are company-level. Proply matches on `domain` first, then `company_name`. If no company match exists, the signal is stored as an orphaned event and attached when a matching contact is later created.
+
+## API key (optional)
+
+To use Proply's built-in Signalbase enrichment (not just webhooks), add your Signalbase API key in **Settings → Integrations → Signalbase**.
