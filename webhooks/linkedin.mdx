@@ -1,0 +1,32 @@
+---
+title: LinkedIn Webhook
+description: Receive LinkedIn messages and connection events via Unipile.
+---
+
+## Endpoint
+
+```
+POST https://api.yourdomain.com/inbound/linkedin/:workspaceId
+```
+
+Also accepts query-param style (Unipile's format):
+```
+POST https://api.yourdomain.com/inbound/linkedin?workspace_id=<id>&secret=<secret>
+```
+
+## Auth
+
+Set `LINKEDIN_WEBHOOK_SECRET` in `proply.env`. Proply accepts either:
+- `x-proply-signature: sha256=<hmac>` header
+- `?secret=<value>` query param (Unipile sends this)
+
+## Supported events
+
+| Unipile event | Activity logged |
+|---|---|
+| `message_received` | `linkedin_message` |
+| `new_relation` | `linkedin_connection` |
+
+## Setup
+
+See [LinkedIn provider setup](/providers/linkedin) for Unipile OAuth and webhook configuration.
