@@ -1,15 +1,14 @@
 ---
 title: "Quickstart"
-description: "Get Proply running and connect your first integration in under 10 minutes"
+description: "Get Proply running and connect your first integration in under 15 minutes"
 ---
 
 ## Prerequisites
 
-Before you start, you'll need:
-
-- [Docker](https://docs.docker.com/get-docker/) installed
-- A [Supabase](https://supabase.com) project (free tier works)
-- An [Anthropic API key](https://console.anthropic.com) for AI synthesis
+- [Docker](https://docs.docker.com/get-docker/) installed (for production)
+- [Node.js 20+](https://nodejs.org) and [pnpm](https://pnpm.io) (for local dev)
+- A [Supabase](https://supabase.com) project — free tier works
+- An [Anthropic API key](https://console.anthropic.com)
 
 ---
 
@@ -21,28 +20,58 @@ cd proply-crm
 cp .env.example .env
 ```
 
-Open `.env` and fill in the required keys:
+Open `.env` and fill in the required values:
 
 ```bash
-# Supabase
+# Supabase — from your Supabase project → Settings → API
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
 
-# Anthropic (for AI synthesis and ICP scoring)
+# Anthropic
 ANTHROPIC_API_KEY=sk-ant-...
+
+# Generate these with the commands below
+ENCRYPTION_KEY=
+API_SECRET=
 ```
 
-## Step 2: Start everything
+Generate `ENCRYPTION_KEY` and `API_SECRET`:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+# run twice — paste first output into ENCRYPTION_KEY, second into API_SECRET
+```
+
+## Step 2: Run the database schema
+
+<Warning>
+  This step is required. Without it the app will start but nothing will work.
+</Warning>
+
+Open your Supabase project → **SQL Editor** → paste and run the contents of [`supabase/schema.sql`](https://github.com/bennetglinder1/proply-crm/blob/main/supabase/schema.sql).
+
+This creates all tables, indexes, RLS policies, and enables the `vector` and `uuid-ossp` extensions.
+
+## Step 3: Install and start
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-This starts the API server on `http://localhost:3000` and the frontend on `http://localhost:5173`.
+This starts all four services in parallel:
 
-## Step 3: Connect your first integration
+| Service | URL | What it does |
+|---|---|---|
+| API server | `http://localhost:3000` | Core REST API, identity resolution, signal ingestion |
+| Frontend | `http://localhost:5173` | Web UI |
+| MCP server | `http://localhost:3001` | Agent tool interface |
+| Worker | — | Background jobs: AI synthesis, sync, scoring |
+
+## Step 4: Connect your first integration
 
 Open `http://localhost:5173` → **Settings → Integrations** and connect at least one source:
 
@@ -50,21 +79,18 @@ Open `http://localhost:5173` → **Settings → Integrations** and connect at le
   <Card title="HubSpot" icon="database" href="/providers/overview">
     One-time import of existing contacts and deal history.
   </Card>
-
   <Card title="Gmail" icon="envelope" href="/providers/overview">
     Ingest email signals in real time via OAuth.
   </Card>
-
   <Card title="LinkedIn" icon="linkedin" href="/providers/linkedin">
     Pull connection requests and messages via Unipile.
   </Card>
-
   <Card title="Webhooks" icon="bolt" href="/providers/overview">
     Connect any custom signal source with HMAC auth.
   </Card>
 </CardGroup>
 
-## Step 4: Connect your AI agent via MCP
+## Step 5: Connect your AI agent via MCP
 
 Add Proply to your `mcp.json` (Claude Desktop, Cursor, or any MCP host):
 
@@ -85,34 +111,21 @@ Add Proply to your `mcp.json` (Claude Desktop, Cursor, or any MCP host):
 
 Generate your API key under **Settings → API Keys**.
 
-## Step 5: Make your first query
-
-Once connected, your agent can query any contact with a single tool call:
-
-```
-get_contact sarah@acmecorp.com
-```
-
-Proply returns the full unified record — every touchpoint, memory, ICP score, and deal stage — in one call.
-
 ---
 
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="How it works" icon="diagram-project" href="/getting-started/how-it-works">
-    Understand identity resolution, signal ingestion, and the unified record architecture.
+    Identity resolution, signal ingestion, and the unified record architecture.
   </Card>
-
   <Card title="MCP tools reference" icon="robot" href="/mcp/introduction">
     Full reference for all MCP tools your agents can call.
   </Card>
-
   <Card title="Production deploy" icon="server" href="/installation/docker-compose">
-    Deploy Proply on your own infrastructure with Docker Compose.
+    Deploy on your own infrastructure with Docker Compose.
   </Card>
-
   <Card title="Public API" icon="code" href="/public-api/introduction">
-    Integrate directly via REST API from any language or platform.
+    Integrate via REST API from any language or platform.
   </Card>
 </CardGroup>
