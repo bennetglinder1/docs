@@ -1,109 +1,126 @@
 ---
 title: "How it works"
-description: "Understand the architecture of Proply"
+description: "Identity resolution, signal ingestion, and agent access"
 ---
 
-## Architecture
+## The problem Proply solves
 
-Proply is composed of three main layers: an **API server** that handles all read/write operations, an **MCP server** that exposes tools directly to AI agents, and a **signal ingestion layer** that collects relationship signals from connected providers.
+Your GTM stack has a data problem. Apollo has the prospect list. Salesforce has the deal history. Smartlead has the email sequences. Gmail has the replies. LinkedIn has the conversations. None of these systems know what's happening in the others — and none of them are queryable by an AI agent in a structured way.
 
-All three layers run within a single Docker container and share a PostgreSQL database. Signals from external services flow in through provider integrations and webhooks; AI synthesis runs on the signal stream and writes structured memory back to the database.
+The result: duplicate contacts, missed signals, agents that act without context, and attribution that's always wrong.
+
+## How Proply works
+
+Proply sits underneath your GTM stack as the identity layer. It ingests signals from every connected tool, resolves them to a single record per human, and exposes the full account context to agents through MCP.
 
 ```mermaid
 flowchart LR
-    classDef agent fill:#1E40AF,color:white,stroke:#fff
-    classDef svc fill:#3B82F6,color:white,stroke:#fff
-    classDef ext fill:#6B7280,color:white,stroke:#fff
-    classDef store fill:#059669,color:white,stroke:#fff
+    classDef source fill:#1E40AF,color:white,stroke:#fff
+    classDef core fill:#3B82F6,color:white,stroke:#fff
+    classDef output fill:#059669,color:white,stroke:#fff
 
-    agent["Your AI Agent"]:::agent
-    mcp["MCP Server"]:::svc
-    api["API Server"]:::svc
-    synthesis["AI Synthesis"]:::svc
-    db[("PostgreSQL")]:::store
-    webhooks["Webhooks"]:::ext
-    linkedin["LinkedIn / Unipile"]:::ext
-    calendar["Google Calendar"]:::ext
-    hubspot["HubSpot"]:::ext
+    apollo["Apollo"]:::source
+    sf["Salesforce / CRM"]:::source
+    smartlead["Smartlead"]:::source
+    gmail["Gmail"]:::source
+    linkedin["LinkedIn"]:::source
+    webhooks["Custom Webhooks"]:::source
 
-    agent -->|tool calls| mcp
-    mcp --> api
-    api --> db
-    api --> synthesis
-    synthesis --> db
-    webhooks --> api
-    linkedin --> api
-    calendar --> api
-    hubspot --> api
+    ingest["Signal Ingestion"]:::core
+    resolve["Identity Resolution"]:::core
+    db[("Unified Record")]:::core
+    sync["Live Sync"]:::core
+
+    mcp["MCP Connector"]:::output
+    api["REST API"]:::output
+    agent["Your Agent"]:::output
+
+    apollo --> ingest
+    sf --> ingest
+    smartlead --> ingest
+    gmail --> ingest
+    linkedin --> ingest
+    webhooks --> ingest
+
+    ingest --> resolve
+    resolve --> db
+    db --> sync
+    sync --> apollo
+    sync --> sf
+
+    db --> mcp
+    db --> api
+    mcp --> agent
+    api --> agent
 ```
 
-* [API Server](#api-server) — The core service. Handles all CRUD for contacts, companies, memory, activities, and pipeline state.
-
-* [MCP Server](#mcp-server) — Exposes a structured tool surface that AI agents call directly. No UI required.
-
-* [AI Synthesis](#ai-synthesis) — Reads the raw activity log and writes structured memory summaries back to each contact and company record.
-
-* [Signal Providers](#signal-providers) — LinkedIn, Google Calendar, HubSpot, and custom webhooks that feed the activity stream.
-
-* [PostgreSQL](#postgresql) — Single source of truth for all contacts, memory, pipeline state, and activity history.
-
 ---
 
-### API Server
+## Core components
 
-The API server is the brain of Proply. It provides a REST API consumed by the MCP server, the web UI, and any direct integrations. All contact reads and writes, memory updates, pipeline stage transitions, and activity logging flow through here.
+### Signal ingestion
 
-### MCP Server
+Proply connects to your GTM tools via OAuth, native integrations, and HMAC-authenticated webhooks. Every event — email sent, LinkedIn message, CRM update, sequence enrolled — flows into Proply in real time.
 
-The MCP server is how AI agents interact with Proply. It exposes ten core tools:
+Supported sources:
 
-| Tool | What it does |
+| Category | Tools |
 |---|---|
-| `get_contact` | Read full contact record and memory for a given contact |
-| `get_company_memory` | Read org-level memory shared across all contacts at a company |
-| `log_activity` | Write an activity event to the contact signal stream |
-| `update_pipeline_stage` | Move a contact through the 5-stage pipeline |
-| `create_contact` | Add a new contact to the workspace |
-| `search_contacts` | Fuzzy search contacts by name, email, or company |
-| `get_pipeline` | Read the full pipeline with stage counts and recent activity |
-| `draft_proposal` | Trigger AI-powered proposal generation for a contact |
-| `get_workspace_context` | Read workspace-level settings and active integrations |
-| `list_recent_activity` | Fetch the most recent signals across all contacts |
+| CRM | Salesforce, HubSpot, Pipedrive, Attio, Folk, Close |
+| Outbound | Smartlead, Instantly, Apollo sequences |
+| Email | Gmail, Outlook |
+| Social | LinkedIn (via Unipile) |
+| Enrichment | Apollo, Prospeo |
+| Public signals | RB2B (website visits), Signalbase (intent/funding/job changes) |
+| Custom | Any HTTP webhook with HMAC auth |
 
-### AI Synthesis
+### Identity resolution
 
-After each activity event is logged, Proply runs an AI synthesis pass over the raw signal stream and writes a structured summary back to the contact or company memory record. This means your agents always read clean, synthesized context — not a raw event log.
+Every inbound signal is resolved to a single contact record. Proply deduplicates across email address, LinkedIn URL, phone number, and name+company matching — so the same person showing up in Apollo, Salesforce, and Gmail becomes one clean record, not three.
 
-### Signal Providers
+### Unified record
 
-Proply collects relationship signals from:
+Each resolved contact has:
 
-* **LinkedIn** (via Unipile) — Connection requests, messages, and profile visits
-* **Google Calendar** — Meetings, rescheduled calls, and no-shows
-* **HubSpot** — One-time bootstrap import of existing CRM data
-* **Webhooks** — Any custom signal source via an authenticated HMAC webhook endpoint
+- **Person graph** — Full activity timeline: every email, call, LinkedIn message, sequence event, and CRM update in chronological order
+- **Contact memory** — Structured facts synthesized from signals: objections raised, topics discussed, preferences noted
+- **Company memory** — Org-level context shared across all stakeholders at an account
+- **ICP score** — How well this contact matches your ideal customer profile, recalculated as signals come in
 
-### PostgreSQL
+### Live sync
 
-All data is stored in a single PostgreSQL database. The schema is organized around four core entities:
+Changes in Proply propagate back to connected tools. Update a contact's stage in Proply → it updates in Salesforce. Enrich a contact → Apollo and your CRM stay current. Your stack stays in sync without manual work.
 
-* **Contacts** — Individual people with associated memory, activities, and pipeline state
-* **Companies** — Org-level entities with shared memory across all contacts
-* **Activities** — The full event log, tagged by source (email, LinkedIn, calendar, webhook)
-* **Memories** — Structured AI-synthesized summaries, tagged to a contact or company
+### MCP connector
+
+The MCP connector exposes the full unified record to AI agents. One call returns everything: contact facts, company context, full activity timeline, ICP score, deal stage.
+
+```json
+// Example: agent queries account context before sending an email
+{
+  "tool": "get_contact",
+  "contact": "sarah@acmecorp.com",
+  "response": {
+    "name": "Sarah Chen",
+    "company": "Acme Corp",
+    "stage": "evaluating",
+    "icp_score": 87,
+    "last_touchpoint": "LinkedIn message — 3 days ago, no reply",
+    "memory": "Raised pricing concern on first call. Decision by end of Q2.",
+    "company_memory": "3 active sequences running to this account. VP of Sales is the real buyer."
+  }
+}
+```
 
 ---
 
-## Pipeline stages
+## Features
 
-Proply uses five behavior-driven stages rather than arbitrary CRM labels. Stage transitions are triggered by observed activity signals, not manual clicks.
-
-| Stage | Meaning | Typical signal |
-|---|---|---|
-| **Identified** | Contact exists, no interaction yet | Profile visit, list import |
-| **Aware** | First contact made | LinkedIn connection, cold email sent |
-| **Interested** | Engagement observed | Reply received, meeting booked |
-| **Evaluating** | Active consideration | Proposal viewed, follow-up meetings |
-| **Client** | Deal closed | Contract signed, invoice paid |
-
-Contacts that go silent decay back toward earlier stages automatically based on configurable time rules.
+| Feature | What it does |
+|---|---|
+| **Person graph** | Full context and activity history per contact — every touchpoint across all channels |
+| **MCP connector** | One call returns full account context to any MCP-compatible agent |
+| **ICP scoring** | Automatically scores contacts against your ideal customer profile as signals arrive |
+| **Inbound enrichment** | Cleans and enriches inbound leads before they hit your CRM |
+| **Pattern analysis** | Reports on wins, losses, and pipeline movement — what campaigns and channels are actually working |
+| **CRM sync** | Stays fully in sync with your existing CRM — Proply enriches it, doesn't replace it |
