@@ -1,0 +1,34 @@
+---
+title: "HubSpot"
+description: "Import contacts, companies, and deals from HubSpot"
+---
+
+HubSpot is a one-time bootstrap import. Proply pulls your existing contacts, companies, and deals and merges them into the unified record. After import, Proply operates independently — there is no ongoing sync back to HubSpot.
+
+## What gets imported
+
+* Contacts — name, email, company, phone, HubSpot owner
+* Companies — name, domain, industry, location
+* Deals — name, value, stage, close date
+
+## Step 1: Connect HubSpot
+
+1. Open Proply → **Settings → Integrations → CRM**
+2. Click **Connect HubSpot**
+3. Complete the HubSpot OAuth flow — you will be redirected back automatically
+4. The connection is saved encrypted to your workspace
+
+## Step 2: Run the import
+
+1. After connecting, click **Import from HubSpot**
+2. Select which object types to import (contacts, companies, deals)
+3. Optionally search for specific records or import all
+4. Click **Import** — Proply runs identity resolution and merges duplicates automatically
+
+## Step 3: Verify
+
+Open **Contacts** in Proply. Your HubSpot contacts should appear with their company and deal associations intact.
+
+<Note>
+  Importing the same contacts twice is safe — Proply deduplicates on email and HubSpot ID. Existing records are updated, not duplicated.
+</Note>
