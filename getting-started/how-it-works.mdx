@@ -13,6 +13,47 @@ The result: duplicate contacts, missed signals, agents that act without context,
 
 Proply sits underneath your GTM stack as the identity layer. It ingests signals from every connected tool, resolves them to a single record per human, and exposes the full account context to agents through MCP.
 
+```mermaid
+flowchart LR
+    classDef source fill:#1E40AF,color:white,stroke:#fff
+    classDef core fill:#3B82F6,color:white,stroke:#fff
+    classDef output fill:#059669,color:white,stroke:#fff
+
+    apollo["Apollo"]:::source
+    sf["Salesforce / CRM"]:::source
+    smartlead["Smartlead"]:::source
+    gmail["Gmail"]:::source
+    linkedin["LinkedIn"]:::source
+    webhooks["Custom Webhooks"]:::source
+
+    ingest["Signal Ingestion"]:::core
+    resolve["Identity Resolution"]:::core
+    db[("Unified Record")]:::core
+    sync["Live Sync"]:::core
+
+    mcp["MCP Connector"]:::output
+    api["REST API"]:::output
+    agent["Your Agent"]:::output
+
+    apollo --> ingest
+    sf --> ingest
+    smartlead --> ingest
+    gmail --> ingest
+    linkedin --> ingest
+    webhooks --> ingest
+
+    ingest --> resolve
+    resolve --> db
+    db --> sync
+    sync --> apollo
+    sync --> sf
+
+    db --> mcp
+    db --> api
+    mcp --> agent
+    api --> agent
+```
+
 **Three steps:**
 
 1. **Ingest** — Connect your GTM tools. Proply pulls signals from Apollo, Salesforce, Smartlead, Gmail, LinkedIn, and any custom webhook in real time.
