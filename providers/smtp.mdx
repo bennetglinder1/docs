@@ -1,0 +1,72 @@
+---
+title: Custom SMTP
+description: Log emails sent from your own SMTP server as activity signals on contact timelines.
+---
+
+## Overview
+
+If you send outbound emails through your own SMTP server — rather than a sequencing tool like Smartlead or Instantly — you can forward those send events to Proply using the capture API with `source: "smtp"`.
+
+Proply logs them as `email_sent` (or other email activity types) on the matching contact's timeline, so your agents have full context on outreach history regardless of what tool sent the email.
+
+## How it works
+
+There's no OAuth or webhook subscription to configure. After each email send, your server POSTs to the [capture endpoint](/providers/webhooks) with `source` set to `smtp`.
+
+## Sending a signal
+
+```bash
+curl -X POST https://api.yourdomain.com/api/v1/capture \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "prospect@company.com",
+    "type": "email_sent",
+    "source": "smtp",
+    "description": "Outbound: Introduction to Proply",
+    "metadata": {
+      "subject": "Introduction to Proply",
+      "message_id": "<abc123@yourdomain.com>"
+    }
+  }'
+```
+
+## Activity types
+
+| `type` value | When to use |
+|---|---|
+| `email_sent` | Email successfully delivered |
+| `email_opened` | Recipient opened the email (requires open tracking pixel) |
+| `email_replied` | Recipient replied |
+| `email_bounced` | Email bounced |
+| `email_clicked` | Recipient clicked a link |
+
+## Response
+
+```json
+{
+  "ok": true,
+  "activity_id": "uuid",
+  "contact_id": "uuid",
+  "stage_before": "identified",
+  "stage_after": "aware"
+}
+```
+
+`stage_before` and `stage_after` tell you if this signal moved the contact to a new pipeline stage.
+
+## Deduplication
+
+Pass a unique `external_id` to prevent duplicate activities if your webhook fires more than once:
+
+```json
+{
+  "email": "prospect@company.com",
+  "type": "email_sent",
+  "source": "smtp",
+  "external_id": "msg_<message-id-from-smtp-headers>",
+  "description": "Outbound: Introduction to Proply"
+}
+```
+
+See [Webhooks](/providers/webhooks) for the full field reference and all supported `activity_type` values.
