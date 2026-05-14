@@ -1,53 +1,62 @@
 ---
 title: "Introduction"
-description: "Welcome to Proply — account memory for AI agents"
+description: "GTM data infrastructure for the agent era"
 ---
 
 <Note>
-  Proply is the memory layer that makes your AI agents relationship-aware. Give your agents persistent, structured knowledge about every contact, company, and deal.
+  Proply is in private beta. [Join the waitlist](https://goproply.com/waitlist) — every application reviewed personally.
 </Note>
-
-<Warning>
-  Looking to integrate programmatically? Check out the [MCP Server](/mcp/introduction) or the [Public API](/public-api/introduction).
-</Warning>
 
 ## What is Proply?
 
-Proply is **account memory for AI agents**. It gives your agents a persistent, structured understanding of every relationship — who the contact is, what they care about, where they are in the pipeline, and what signals have been observed.
+Proply is **GTM data infrastructure for the agent era**.
 
-Most CRMs are built for humans clicking through a UI. Proply is built for agents reading and writing context programmatically — through an MCP server your agent calls directly, or a REST API you can wire into any workflow.
+Your GTM stack is fragmented — Apollo for prospecting, Salesforce for CRM, Smartlead for sequences, Gmail for email, LinkedIn for social. Each tool has part of the picture. None of them talk to each other in real time, and none of them are queryable by an AI agent.
 
-- **People memory** — Private facts about individuals: communication style, preferences, and key context from past interactions
-- **Company memory** — Org-level facts shared across every contact at that company
-- **Pipeline signals** — Activity events from email, LinkedIn, calendar, webhooks, and third-party sources
-- **AI synthesis** — Proply reads the raw signal stream and writes structured summaries back into memory automatically
+Proply fixes that. It unifies every signal across your outbound, communication, and CRM tools into **one identity-resolved record per human** — then exposes the full account context to your agents through a single MCP call.
 
-<CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/getting-started/quickstart">
-    Get Proply running and connect your first agent in under 10 minutes.
+Your agent knows everything before it acts. Every touchpoint. Every signal. Every deal stage.
+
+## What it does
+
+- **Unified identity resolution** — No duplicates, no gaps. Every contact across Apollo, Salesforce, Smartlead, Gmail, and LinkedIn is merged into one clean record.
+- **Complete timeline visibility** — Every email, call, LinkedIn message, and CRM event in one place. Know exactly where a prospect stands before you act.
+- **Live sync across your stack** — Outbound tools, communication tools, and CRM stay perfectly in sync. One update propagates everywhere.
+- **Agent-ready context** — Agents query the full account context in a single MCP call. No data wrangling, no stitching APIs together.
+- **Revenue attribution** — Tie campaigns, channels, and actions directly to pipeline and closed deals. Scale what works, cut what doesn't.
+
+## Who it's for
+
+<CardGroup cols={3}>
+  <Card title="Outbound agencies" icon="building">
+    Running 10–50 client stacks. One place to manage data quality, deduplication, and attribution across all clients.
   </Card>
 
-  <Card title="How it works" icon="diagram-project" href="/getting-started/how-it-works">
-    Understand the architecture: API server, MCP tools, signal ingestion, and memory layers.
+  <Card title="GTM engineers" icon="code">
+    At outbound-heavy companies. You own the data layer. Proply is the infrastructure under your agent stack.
+  </Card>
+
+  <Card title="RevOps leads" icon="chart-bar">
+    Owning the data layer. Finally a system that gives you clean, unified data — without rebuilding it every quarter.
   </Card>
 </CardGroup>
 
-## Core capabilities
+## Get started
 
 <CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/getting-started/quickstart">
+    Get Proply running and connect your first integration in under 10 minutes.
+  </Card>
+
+  <Card title="How it works" icon="diagram-project" href="/getting-started/how-it-works">
+    Understand the architecture: identity resolution, signal ingestion, and the MCP connector.
+  </Card>
+
   <Card title="MCP Server" icon="robot" href="/mcp/introduction">
-    Ten tools your agent can call: read contact memory, log activity, update pipeline stage, draft proposals, and more.
-  </Card>
-
-  <Card title="Signal Providers" icon="bolt" href="/providers/overview">
-    Ingest relationship signals from LinkedIn, Google Calendar, email, HubSpot, and custom webhooks.
-  </Card>
-
-  <Card title="Pipeline Stages" icon="chart-line" href="/getting-started/how-it-works">
-    Five behavior-driven stages — from identified to client — with configurable decay rules and AI-powered scoring.
+    Connect your AI agent to the full account context in one call.
   </Card>
 
   <Card title="Public API" icon="code" href="/public-api/introduction">
-    Full REST API for reading and writing contacts, memory, activities, and pipeline state from any system.
+    Full REST API for reading and writing contacts, timelines, and account context.
   </Card>
 </CardGroup>
