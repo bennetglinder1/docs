@@ -1,0 +1,49 @@
+---
+title: Calendly Webhook
+description: Log meeting bookings and cancellations from Calendly on contact timelines.
+---
+
+## Endpoint
+
+```
+POST https://api.yourdomain.com/inbound/calendly/:workspaceId
+```
+
+## Auth
+
+Set `CALENDLY_WEBHOOK_SECRET` in `proply.env`. Proply checks `x-proply-signature`.
+
+## Setup in Calendly
+
+See [Calendly provider setup](/providers/calendly) for full webhook configuration steps.
+
+## Supported events
+
+| Calendly event | Activity logged |
+|---|---|
+| `invitee.created` | `meeting_scheduled` |
+| `invitee.canceled` | `meeting_cancelled` |
+
+## Payload
+
+```json
+{
+  "event": "invitee.created",
+  "payload": {
+    "invitee": {
+      "email": "prospect@company.com",
+      "name": "Jane Smith"
+    },
+    "event_type": {
+      "name": "30 Min Discovery Call"
+    },
+    "scheduled_event": {
+      "start_time": "2026-05-20T14:00:00Z"
+    }
+  }
+}
+```
+
+<Note>
+  Calendly **creates new contacts** on `invitee.created` — a booking is a strong enough intent signal to bootstrap the contact.
+</Note>
