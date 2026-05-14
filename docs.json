@@ -90,7 +90,7 @@
         ]
       },
       {
-        "tab": "Developer App (oAuth2)",
+        "tab": "Developer App",
         "groups": [
           {
             "group": "Developer App",
@@ -116,7 +116,7 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/bennetglinder1/docs",
+          "href": "https://github.com/bennetglinder1/proply-crm",
           "icon": "github"
         },
         {
@@ -125,9 +125,9 @@
           "icon": "discord"
         },
         {
-          "anchor": "YouTube",
-          "href": "https://youtube.com",
-          "icon": "youtube"
+          "anchor": "Waitlist",
+          "href": "https://goproply.com/waitlist",
+          "icon": "rocket"
         }
       ]
     }
@@ -145,27 +145,15 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Register to the cloud",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Join the waitlist",
+      "href": "https://goproply.com/waitlist"
     }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/bennetglinder",
+      "github": "https://github.com/bennetglinder1/proply-crm",
+      "linkedin": "https://linkedin.com/company/proply"
     }
   }
 }
