@@ -1,3 +1,118 @@
 ---
 title: "Quickstart"
+description: "Get Proply running and connect your first integration in under 10 minutes"
 ---
+
+## Prerequisites
+
+Before you start, you'll need:
+
+- [Docker](https://docs.docker.com/get-docker/) installed
+- A [Supabase](https://supabase.com) project (free tier works)
+- An [Anthropic API key](https://console.anthropic.com) for AI synthesis
+
+---
+
+## Step 1: Clone and configure
+
+```bash
+git clone https://github.com/bennetglinder1/proply-crm.git
+cd proply-crm
+cp .env.example .env
+```
+
+Open `.env` and fill in the required keys:
+
+```bash
+# Supabase
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Anthropic (for AI synthesis and ICP scoring)
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+## Step 2: Start everything
+
+```bash
+pnpm install
+pnpm dev
+```
+
+This starts the API server on `http://localhost:3000` and the frontend on `http://localhost:5173`.
+
+## Step 3: Connect your first integration
+
+Open `http://localhost:5173` → **Settings → Integrations** and connect at least one source:
+
+<CardGroup cols={2}>
+  <Card title="HubSpot" icon="database" href="/providers/overview">
+    One-time import of existing contacts and deal history.
+  </Card>
+
+  <Card title="Gmail" icon="envelope" href="/providers/overview">
+    Ingest email signals in real time via OAuth.
+  </Card>
+
+  <Card title="LinkedIn" icon="linkedin" href="/providers/linkedin">
+    Pull connection requests and messages via Unipile.
+  </Card>
+
+  <Card title="Webhooks" icon="bolt" href="/providers/overview">
+    Connect any custom signal source with HMAC auth.
+  </Card>
+</CardGroup>
+
+## Step 4: Connect your AI agent via MCP
+
+Add Proply to your `mcp.json` (Claude Desktop, Cursor, or any MCP host):
+
+```json
+{
+  "mcpServers": {
+    "proply": {
+      "command": "npx",
+      "args": ["-y", "@goproply/mcp"],
+      "env": {
+        "PROPLY_API_KEY": "your-api-key",
+        "PROPLY_API_URL": "http://localhost:3000"
+      }
+    }
+  }
+}
+```
+
+Generate your API key under **Settings → API Keys**.
+
+## Step 5: Make your first query
+
+Once connected, your agent can query any contact with a single tool call:
+
+```
+get_contact sarah@acmecorp.com
+```
+
+Proply returns the full unified record — every touchpoint, memory, ICP score, and deal stage — in one call.
+
+---
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="How it works" icon="diagram-project" href="/getting-started/how-it-works">
+    Understand identity resolution, signal ingestion, and the unified record architecture.
+  </Card>
+
+  <Card title="MCP tools reference" icon="robot" href="/mcp/introduction">
+    Full reference for all MCP tools your agents can call.
+  </Card>
+
+  <Card title="Production deploy" icon="server" href="/installation/docker-compose">
+    Deploy Proply on your own infrastructure with Docker Compose.
+  </Card>
+
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    Integrate directly via REST API from any language or platform.
+  </Card>
+</CardGroup>
