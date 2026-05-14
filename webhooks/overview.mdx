@@ -1,0 +1,46 @@
+---
+title: Webhook Overview
+description: Every inbound webhook endpoint Proply exposes — URLs, payloads, and HMAC secrets.
+---
+
+## How webhooks work
+
+Proply's worker exposes a webhook server at `https://api.yourdomain.com/inbound/`. Each source gets its own path with your workspace ID embedded in the URL.
+
+```
+https://api.yourdomain.com/inbound/<source>/<workspaceId>
+```
+
+All handlers return `{ "ok": true }` immediately — retries won't cause duplicate activities because every event is deduplicated by `external_id`.
+
+## Available endpoints
+
+| Source | Endpoint | Creates contacts? |
+|---|---|---|
+| [LinkedIn](/webhooks/linkedin) | `/inbound/linkedin/:workspaceId` | Yes |
+| [Instantly](/webhooks/instantly) | `/inbound/instantly/:workspaceId` | No |
+| [Fireflies](/webhooks/fireflies) | `/inbound/fireflies/:workspaceId` | No |
+| [RB2B](/webhooks/rb2b) | `/inbound/rb2b/:workspaceId` | Yes |
+| [Calendly](/webhooks/calendly) | `/inbound/calendly/:workspaceId` | Yes |
+| [Stripe](/webhooks/stripe) | `/inbound/stripe/:workspaceId` | No |
+| [Custom capture](/webhooks/custom) | `/api/v1/capture` (API key auth) | No |
+
+## HMAC verification
+
+Set a shared secret for each source in `proply.env`. Proply validates the `x-proply-signature` or `x-hub-signature-256` header using `HMAC-SHA256`.
+
+```bash
+# proply.env
+LINKEDIN_WEBHOOK_SECRET=your-secret
+INSTANTLY_WEBHOOK_SECRET=your-secret
+CALENDLY_WEBHOOK_SECRET=your-secret
+FIREFLIES_WEBHOOK_SECRET=your-secret
+RB2B_WEBHOOK_SECRET=your-secret
+STRIPE_INBOUND_WEBHOOK_SECRET=your-secret
+```
+
+If a secret is **not set**, the signature check is skipped — fine for local dev, but set secrets in production.
+
+## Finding your workspace ID
+
+Your workspace ID is a UUID visible in **Settings → Workspace**. It's also returned in all API responses under `workspace_id`.
