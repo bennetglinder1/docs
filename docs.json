@@ -25,10 +25,7 @@
             "group": "Installation",
             "pages": [
               "installation/docker-compose",
-              "installation/docker",
-              "installation/helm",
-              "installation/development-environment",
-              "installation/dev-container"
+              "installation/development-environment"
             ]
           },
           {
