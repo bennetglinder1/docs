@@ -1,0 +1,40 @@
+---
+title: RB2B Webhook
+description: De-anonymize website visitors and log them as contacts with a website_visit activity.
+---
+
+## Endpoint
+
+```
+POST https://api.yourdomain.com/inbound/rb2b/:workspaceId
+```
+
+## Auth
+
+Set `RB2B_WEBHOOK_SECRET` in `proply.env`. Proply checks `x-proply-signature`.
+
+## Setup in RB2B
+
+See [RB2B provider setup](/providers/rb2b) for full webhook configuration steps.
+
+## Payload
+
+```json
+{
+  "email": "visitor@company.com",
+  "linkedin_url": "https://linkedin.com/in/visitor",
+  "first_name": "John",
+  "last_name": "Doe",
+  "company": "Acme Corp",
+  "job_title": "VP Sales",
+  "page_url": "https://goproply.com/pricing"
+}
+```
+
+## Activity logged
+
+`website_visit` on the matched or newly created contact.
+
+<Note>
+  RB2B **creates new contacts** if `email` or `linkedin_url` is present and no match is found.
+</Note>
