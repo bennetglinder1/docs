@@ -1,0 +1,34 @@
+---
+title: "Fathom"
+description: "Push call summaries and action items into contact timelines"
+---
+
+Fathom records and summarises your calls, then sends a webhook to Proply after each meeting. The call summary and participant emails are logged to the matching contact's timeline.
+
+## What gets ingested
+
+* Meeting title and date
+* Participant emails (matched to contacts)
+* Fathom AI summary added to contact memory
+
+## Step 1: Get your webhook URL
+
+Open Proply → **Settings → Integrations → Fathom** → copy your webhook URL.
+
+Format: `https://api.yourdomain.com/inbound/fathom?workspace_id=<your-id>`
+
+## Step 2: Add the webhook in Fathom
+
+1. Go to [fathom.video](https://fathom.video) → **Settings → Integrations → Webhooks**
+2. Add a new webhook endpoint
+3. Paste your Proply URL
+4. Select trigger: **Meeting Ended**
+5. Save
+
+## Step 3: Verify
+
+Run a test call with Fathom recording. The meeting should appear in the participant's contact timeline in Proply within a few minutes.
+
+<Note>
+  Like Fireflies, Fathom webhooks only update existing contacts — they do not create new ones.
+</Note>
