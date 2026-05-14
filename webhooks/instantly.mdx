@@ -1,0 +1,56 @@
+---
+title: Instantly Webhook
+description: Log email sequence events from Instantly.ai on contact timelines.
+---
+
+## Endpoint
+
+```
+POST https://api.yourdomain.com/inbound/instantly/:workspaceId
+```
+
+## Auth
+
+Set `INSTANTLY_WEBHOOK_SECRET` in `proply.env`. Proply checks `x-proply-signature`.
+
+## Setup in Instantly
+
+1. In Instantly, go to **Settings → Integrations → Webhooks**.
+2. Add a new webhook with your endpoint URL.
+3. Select the events you want to receive.
+
+## Supported events
+
+| Instantly event | Activity logged |
+|---|---|
+| `email_sent` | `email_sent` |
+| `reply_received` | `email_received` |
+| `email_replied` | `email_received` |
+| `email_opened` | `email_opened` |
+| `email_bounced` | `email_bounced` |
+| `unsubscribed` | `email_bounced` |
+
+## Payload
+
+Proply reads these fields:
+
+```json
+{
+  "event_type": "reply_received",
+  "lead_email": "prospect@company.com",
+  "lead_first_name": "Jane",
+  "lead_last_name": "Smith",
+  "campaign_id": "camp_123",
+  "campaign_name": "Q2 Outreach",
+  "preview_text": "Thanks for reaching out...",
+  "message_id": "msg_abc123"
+}
+```
+
+<Note>
+  Instantly is **update-only** — it never creates new contacts. Events are skipped if the email doesn't match an existing contact.
+</Note>
+
+## Deduplication
+
+Events are deduplicated by `message_id`. If Instantly retries a delivery, the duplicate is silently dropped.
