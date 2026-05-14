@@ -13,46 +13,11 @@ The result: duplicate contacts, missed signals, agents that act without context,
 
 Proply sits underneath your GTM stack as the identity layer. It ingests signals from every connected tool, resolves them to a single record per human, and exposes the full account context to agents through MCP.
 
-```mermaid
-flowchart LR
-    classDef source fill:#1E40AF,color:white,stroke:#fff
-    classDef core fill:#3B82F6,color:white,stroke:#fff
-    classDef output fill:#059669,color:white,stroke:#fff
+**Three steps:**
 
-    apollo["Apollo"]:::source
-    sf["Salesforce / CRM"]:::source
-    smartlead["Smartlead"]:::source
-    gmail["Gmail"]:::source
-    linkedin["LinkedIn"]:::source
-    webhooks["Custom Webhooks"]:::source
-
-    ingest["Signal Ingestion"]:::core
-    resolve["Identity Resolution"]:::core
-    db[("Unified Record")]:::core
-    sync["Live Sync"]:::core
-
-    mcp["MCP Connector"]:::output
-    api["REST API"]:::output
-    agent["Your Agent"]:::output
-
-    apollo --> ingest
-    sf --> ingest
-    smartlead --> ingest
-    gmail --> ingest
-    linkedin --> ingest
-    webhooks --> ingest
-
-    ingest --> resolve
-    resolve --> db
-    db --> sync
-    sync --> apollo
-    sync --> sf
-
-    db --> mcp
-    db --> api
-    mcp --> agent
-    api --> agent
-```
+1. **Ingest** — Connect your GTM tools. Proply pulls signals from Apollo, Salesforce, Smartlead, Gmail, LinkedIn, and any custom webhook in real time.
+2. **Resolve** — Every signal is matched to a single contact record via email, LinkedIn URL, phone, and name+company matching. No duplicates.
+3. **Expose** — The unified record is queryable by agents via MCP in a single call — or via REST API from any system.
 
 ---
 
@@ -85,7 +50,7 @@ Each resolved contact has:
 - **Person graph** — Full activity timeline: every email, call, LinkedIn message, sequence event, and CRM update in chronological order
 - **Contact memory** — Structured facts synthesized from signals: objections raised, topics discussed, preferences noted
 - **Company memory** — Org-level context shared across all stakeholders at an account
-- **ICP score** — How well this contact matches your ideal customer profile, recalculated as signals come in
+- **ICP score** — How well this contact matches your ideal customer profile, recalculated as new signals arrive
 
 ### Live sync
 
@@ -96,7 +61,6 @@ Changes in Proply propagate back to connected tools. Update a contact's stage in
 The MCP connector exposes the full unified record to AI agents. One call returns everything: contact facts, company context, full activity timeline, ICP score, deal stage.
 
 ```json
-// Example: agent queries account context before sending an email
 {
   "tool": "get_contact",
   "contact": "sarah@acmecorp.com",
@@ -119,8 +83,8 @@ The MCP connector exposes the full unified record to AI agents. One call returns
 | Feature | What it does |
 |---|---|
 | **Person graph** | Full context and activity history per contact — every touchpoint across all channels |
-| **MCP connector** | One call returns full account context to any MCP-compatible agent |
+| **MCP connector** | One call returns complete account context to any MCP-compatible agent |
 | **ICP scoring** | Automatically scores contacts against your ideal customer profile as signals arrive |
 | **Inbound enrichment** | Cleans and enriches inbound leads before they hit your CRM |
-| **Pattern analysis** | Reports on wins, losses, and pipeline movement — what campaigns and channels are actually working |
-| **CRM sync** | Stays fully in sync with your existing CRM — Proply enriches it, doesn't replace it |
+| **Pattern analysis** | Reports on wins, losses, and what campaigns are actually driving pipeline |
+| **CRM sync** | Stays fully in sync with Salesforce, HubSpot, Pipedrive — enriches them, doesn't replace them |
