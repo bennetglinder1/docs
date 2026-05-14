@@ -1,0 +1,36 @@
+---
+title: "Pipedrive"
+description: "Import persons, organizations, and deals from Pipedrive"
+---
+
+Pipedrive is a one-time bootstrap import. Proply pulls your existing persons, organizations, and deals and merges them into the unified record.
+
+## What gets imported
+
+* Persons — name, email, company, phone, owner
+* Organizations — name, industry, location
+* Deals — name, value, stage, owner
+
+## Step 1: Get your Pipedrive API token
+
+1. Log in to [pipedrive.com](https://pipedrive.com)
+2. Go to **Settings → Personal Preferences → API**
+3. Copy your personal API token
+
+## Step 2: Connect Pipedrive
+
+1. Open Proply → **Settings → Integrations → CRM**
+2. Click **Connect Pipedrive**
+3. Paste your API token
+4. Click **Save**
+
+## Step 3: Run the import
+
+1. Click **Import from Pipedrive**
+2. Select object types (persons, organizations, deals)
+3. Optionally search or import all
+4. Click **Import**
+
+<Note>
+  Proply deduplicates on email and Pipedrive ID. Running the import twice will update existing records, not create duplicates.
+</Note>
