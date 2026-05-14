@@ -1,0 +1,34 @@
+---
+title: "Fireflies.ai"
+description: "Push meeting transcripts and summaries into Proply automatically"
+---
+
+Fireflies sends a webhook after every recorded meeting. Proply receives it, matches the participants to contacts, and logs the meeting with a summary to the activity timeline.
+
+## What gets ingested
+
+* Meeting title and date
+* Participant emails (matched to contacts)
+* AI-generated summary pushed to contact memory
+
+## Step 1: Get your webhook URL
+
+Open Proply → **Settings → Integrations → Fireflies** → copy your webhook URL.
+
+Format: `https://api.yourdomain.com/inbound/fireflies?workspace_id=<your-id>`
+
+## Step 2: Add the webhook in Fireflies
+
+1. Go to [app.fireflies.ai](https://app.fireflies.ai) → **Integrations → Webhooks**
+2. Click **Add Webhook**
+3. Paste your Proply webhook URL
+4. Select trigger: **Meeting Completed**
+5. Click **Save**
+
+## Step 3: Verify
+
+Record a test meeting with Fireflies. After it processes, the meeting should appear in the contact's timeline in Proply within a few minutes.
+
+<Note>
+  Fireflies only sends webhooks for meetings where at least one participant email matches a contact in your Proply workspace. New contacts are not created automatically from Fireflies.
+</Note>
