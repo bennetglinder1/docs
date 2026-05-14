@@ -34,19 +34,10 @@
               "providers/overview",
               "providers/add-new-provider",
               {
-                "group": "Social Platforms",
+                "group": "Signal Providers",
                 "pages": [
-                  "providers/x-twitter",
                   "providers/linkedin",
-                  "providers/facebook",
-                  "providers/instagram",
-                  "providers/youtube",
-                  "providers/tiktok",
-                  "providers/threads",
-                  "providers/bluesky",
-                  "providers/mastodon",
-                  "providers/reddit",
-                  "providers/pinterest"
+                  "providers/webhooks"
                 ]
               }
             ]
