@@ -1,0 +1,55 @@
+---
+title: Apollo
+description: Connect Apollo as your enrichment source and optionally sync sequences as activity signals.
+---
+
+## Overview
+
+Apollo has two roles in Proply:
+
+1. **Enrichment** — Apollo's people match API enriches contacts with email, phone, title, and company data. Replaces Prospeo when enabled.
+2. **Sequence signals** — Apollo sequences (emails sent, replies, bounces) ingest as activity signals via webhook.
+
+## Connect Apollo
+
+### For enrichment
+
+1. In Apollo, go to **Settings → API Keys** and copy your API key.
+2. In Proply, go to **Settings → Integrations → Apollo**.
+3. Paste your key and toggle **Use for enrichment** on.
+
+<Note>
+  When Apollo enrichment is enabled, it takes priority over Prospeo. Toggle it off to fall back to Prospeo.
+</Note>
+
+### For sequence signals (webhook)
+
+Apollo does not have a native outbound webhook for sequences. Use Proply's [custom webhook endpoint](/providers/webhooks) to forward Apollo sequence events.
+
+Map Apollo sequence events like this:
+
+| Apollo event | Proply `activity_type` |
+|---|---|
+| Email sent | `email_sent` |
+| Email opened | `email_opened` |
+| Email replied | `email_replied` |
+| Email bounced | `email_bounced` |
+| Call logged | `call` |
+
+## Enrichment fields
+
+When enrichment runs via Apollo, Proply captures:
+
+| Field | Apollo source |
+|---|---|
+| Full name | `first_name` + `last_name` |
+| Email | `email` |
+| Phone | `phone_numbers[0].sanitized_number` |
+| Title | `title` |
+| Company name | `organization.name` |
+| LinkedIn URL | `linkedin_url` |
+| Apollo ID | `id` (stored as `apollo_id` for future dedup) |
+
+## Environment variables
+
+Apollo enrichment uses your workspace API key stored in the database — no server-level env var needed.
