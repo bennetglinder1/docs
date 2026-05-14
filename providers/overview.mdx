@@ -1,4 +1,53 @@
 ---
-title: "Provider Overview"
-description: "Introduction to providers"
+title: "Providers"
+description: "Connect your GTM stack to Proply"
 ---
+
+Proply connects to your existing GTM tools to ingest relationship signals. Every event — email sent, LinkedIn message, meeting held, website visit — flows into the unified contact record automatically.
+
+<Note>
+  Providers are configured per workspace. Add your keys under **Settings → Integrations** in the app.
+</Note>
+
+## Signal providers
+
+Ingest real-time signals from your communication and outbound tools.
+
+<CardGroup cols={2}>
+  <Card title="LinkedIn" icon="linkedin" href="/providers/linkedin">
+    Connection requests, messages, and profile activity — via Unipile OAuth.
+  </Card>
+  <Card title="Google Calendar" icon="calendar" href="/providers/google-calendar">
+    Meetings, calls, rescheduled events, and no-shows.
+  </Card>
+  <Card title="Fireflies.ai" icon="microphone" href="/providers/fireflies">
+    Meeting transcripts pushed automatically after every call.
+  </Card>
+  <Card title="RB2B" icon="eye" href="/providers/rb2b">
+    De-anonymised website visitors identified and matched to contacts.
+  </Card>
+</CardGroup>
+
+## Enrichment providers
+
+Automatically enrich contacts with company data, emails, and intent signals.
+
+<CardGroup cols={2}>
+  <Card title="Prospeo" icon="magnifying-glass" href="/providers/prospeo">
+    Default enrichment — email lookup and company data.
+  </Card>
+  <Card title="Apollo" icon="bolt" href="/providers/apollo">
+    Optional enrichment toggle. Bring your own Apollo key.
+  </Card>
+  <Card title="Signalbase" icon="chart-line" href="/providers/signalbase">
+    Intent signals, funding rounds, and job changes.
+  </Card>
+</CardGroup>
+
+## Custom
+
+<CardGroup cols={1}>
+  <Card title="Webhooks" icon="webhook" href="/providers/webhooks">
+    Push any signal from any system into Proply via HMAC-authenticated HTTP.
+  </Card>
+</CardGroup>
