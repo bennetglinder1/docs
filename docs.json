@@ -44,8 +44,7 @@
                   "providers/calendly",
                   "providers/webhooks",
                   "providers/smtp",
-                  "providers/instantly",
-                  "providers/stripe"
+                  "providers/instantly"
                 ]
               },
               {
@@ -81,7 +80,6 @@
               "webhooks/fireflies",
               "webhooks/rb2b",
               "webhooks/calendly",
-              "webhooks/stripe",
               "webhooks/custom"
             ]
           }
