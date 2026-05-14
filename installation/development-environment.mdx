@@ -1,4 +1,95 @@
 ---
 title: "Development Environment"
-description: "Set up a local development environment"
+description: "Run Proply locally for development"
 ---
+
+For local development, you run the app code directly with pnpm. Redis is the only service that runs in Docker.
+
+## Prerequisites
+
+* [Node.js 20+](https://nodejs.org)
+* [pnpm](https://pnpm.io) — `npm install -g pnpm`
+* [Docker](https://docs.docker.com/get-docker/) for Redis
+* A [Supabase](https://supabase.com) project
+* An [Anthropic API key](https://console.anthropic.com)
+
+## Step 1: Clone and install
+
+```bash
+git clone https://github.com/bennetglinder1/proply-crm.git
+cd proply-crm
+pnpm install
+```
+
+## Step 2: Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Fill in `.env`:
+
+```bash
+# Supabase — Settings → API
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+
+# Anthropic
+ANTHROPIC_API_KEY=sk-ant-...
+
+# Generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+ENCRYPTION_KEY=
+API_SECRET=
+```
+
+## Step 3: Run the database schema
+
+<Warning>
+  Required on first setup. Open your Supabase project → **SQL Editor** → paste and run [`supabase/schema.sql`](https://github.com/bennetglinder1/proply-crm/blob/main/supabase/schema.sql).
+</Warning>
+
+## Step 4: Start Redis
+
+```bash
+docker compose -f docker-compose.dev.yaml up -d
+```
+
+This starts only Redis on `localhost:6379`.
+
+## Step 5: Start the app
+
+```bash
+pnpm dev
+```
+
+Starts all services in parallel:
+
+| Service | URL |
+|---|---|
+| API | `http://localhost:3000` |
+| Frontend | `http://localhost:5173` |
+| MCP server | `http://localhost:3001` |
+| Worker | background, no HTTP port |
+
+## Hot reload
+
+All services support hot reload. Edit any file under `apps/` and the relevant service restarts automatically.
+
+## Running individual services
+
+```bash
+pnpm dev:api        # API only
+pnpm dev:frontend   # Frontend only
+pnpm dev:worker     # Worker only
+pnpm dev:mcp        # MCP server only
+```
+
+## Stopping
+
+```bash
+# Ctrl+C to stop pnpm dev
+docker compose -f docker-compose.dev.yaml down   # stop Redis
+```
