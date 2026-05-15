@@ -1,34 +1,44 @@
 ---
 title: Calendly
-description: Connect your Calendly personal access token so Proply can query your scheduling data.
+description: Log meeting bookings on contact timelines when someone schedules with you.
 ---
 
-## Overview
+## Connect via Personal Access Token
 
-Connecting Calendly gives Proply access to your event types and scheduled meetings. This lets the agent answer questions about your scheduling context when working with a contact.
+<Steps>
+  <Step title="Open API & Webhooks in Calendly">
+    In Calendly go to **Integrations & apps → API & Webhooks**.
 
-For real-time booking events (automatically creating contacts and logging `meeting_scheduled` when someone books), see the [Calendly webhook](/webhooks/calendly).
+    <img src="/images/providers/calendly/step-1-api.png" alt="Open Calendly API settings" />
+  </Step>
 
-## Setup
+  <Step title="Create a Personal Access Token">
+    Under **Personal Access Tokens** click **Generate new token**, give it a name, and copy the token shown.
 
-### 1. Generate a personal access token
+    <img src="/images/providers/calendly/step-2-create-token.png" alt="Create Calendly Personal Access Token" />
+  </Step>
 
-In Calendly, go to **Integrations → API & Webhooks → Personal Access Tokens** and generate a new token.
+  <Step title="Connect in Proply">
+    Go to **Settings → Integrations → + Add Integration → Calendly**, paste the token, and click **Connect**.
 
-### 2. Connect in Proply
+    <img src="/images/providers/calendly/step-3-connect.png" alt="Connect Calendly in Proply" />
+  </Step>
+</Steps>
 
-Go to **Settings → Integrations → Calendly**, paste your token, and click **Connect**.
+## Set up the Webhook (recommended)
 
-Proply verifies it against the Calendly API and confirms your account name.
+<Steps>
+  <Step title="Copy your webhook URL from Proply">
+    Go to **Settings → Integrations → Webhooks → Calendly** and copy the URL.
 
-## What this enables
+    <img src="/images/providers/calendly/step-4-webhook-url.png" alt="Copy webhook URL from Proply" />
+  </Step>
 
-Once connected, the Proply agent can:
+  <Step title="Create a webhook subscription in Calendly">
+    In Calendly go to **Integrations & apps → API & Webhooks → Webhook Subscriptions → New Webhook**. Paste the URL and select **invitee.created**.
 
-- Check your available event types
-- Query scheduled meetings for a contact
-- Pull Calendly context into conversations
+    <img src="/images/providers/calendly/step-5-add-webhook.png" alt="Add webhook in Calendly" />
+  </Step>
+</Steps>
 
-## Also set up the webhook
-
-The token integration is for on-demand queries. To automatically create contacts and log bookings as they happen, also configure the [Calendly webhook →](/webhooks/calendly)
+See the [Calendly webhook reference](/webhooks/calendly) for payload details.
