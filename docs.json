@@ -34,21 +34,37 @@
               "providers/overview",
               "providers/add-new-provider",
               {
-                "group": "Signal Providers",
+                "group": "Communication",
                 "pages": [
-                  "providers/linkedin",
-                  "providers/google-calendar",
-                  "providers/fireflies",
-                  "providers/fathom",
-                  "providers/rb2b",
-                  "providers/calendly",
-                  "providers/webhooks",
                   "providers/smtp",
+                  "providers/linkedin",
+                  "providers/slack"
+                ]
+              },
+              {
+                "group": "Outbound",
+                "pages": [
                   "providers/instantly"
                 ]
               },
               {
-                "group": "CRM Import",
+                "group": "Meetings",
+                "pages": [
+                  "providers/google-calendar",
+                  "providers/fireflies",
+                  "providers/fathom",
+                  "providers/calendly"
+                ]
+              },
+              {
+                "group": "Intent Signals",
+                "pages": [
+                  "providers/rb2b",
+                  "providers/signalbase"
+                ]
+              },
+              {
+                "group": "CRM",
                 "pages": [
                   "providers/hubspot",
                   "providers/pipedrive",
@@ -60,8 +76,7 @@
                 "group": "Enrichment",
                 "pages": [
                   "providers/prospeo",
-                  "providers/apollo",
-                  "providers/signalbase"
+                  "providers/apollo"
                 ]
               },
               {
@@ -71,6 +86,7 @@
                   "webhooks/linkedin",
                   "webhooks/instantly",
                   "webhooks/fireflies",
+                  "webhooks/fathom",
                   "webhooks/rb2b",
                   "webhooks/calendly",
                   "webhooks/custom"
