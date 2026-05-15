@@ -1,71 +1,82 @@
 ---
-title: Gmail
-description: Sync sent and received emails from Gmail as activity signals on contact timelines.
+title: Gmail & Google Calendar
+description: Sync emails and calendar events automatically via Google OAuth.
 ---
 
-## Overview
-
-Connect Gmail via Google OAuth and Proply polls your inbox and sent mail every 30 minutes, matching emails to existing contacts and logging them as `email_sent` / `email_received` activities.
-
-Connecting Gmail also enables **Google Calendar** sync automatically — the same OAuth token covers both.
-
-**Update-only** — Gmail never creates new contacts.
-
-## Setup
-
-### Step 1 — Register a Google OAuth app (self-hosted only)
-
 <Note>
-  On the cloud version, Google OAuth is pre-configured — skip to Step 2.
+  This requires registering a Google OAuth app. You do this once as the server admin — your users then connect their own Google accounts via the UI.
 </Note>
 
-1. Go to [console.cloud.google.com](https://console.cloud.google.com) and create a new project.
-2. Enable these APIs:
-   - **Gmail API**
-   - **Google Calendar API**
-3. Go to **APIs & Services → OAuth consent screen**. Set app name, add your domain, and add these scopes:
-   - `https://www.googleapis.com/auth/gmail.readonly`
-   - `https://www.googleapis.com/auth/calendar.readonly`
-4. Go to **APIs & Services → Credentials → Create Credentials → OAuth client ID**.
-   - Application type: **Web application**
-   - Authorized redirect URI: `https://api.yourdomain.com/api/oauth/google/callback`
-5. Copy the **Client ID** and **Client Secret**.
+## Server Setup
 
-Add to `proply.env`:
+<Steps>
+  <Step title="Create a Google Cloud project">
+    Go to [console.cloud.google.com](https://console.cloud.google.com) and create a new project (or use an existing one).
 
-```bash
-GOOGLE_CLIENT_ID=your-client-id
-GOOGLE_CLIENT_SECRET=your-client-secret
-GOOGLE_OAUTH_REDIRECT_URI=https://api.yourdomain.com/api/oauth/google/callback
-```
+    <img src="/images/providers/gmail/step-1-create-project.png" alt="Create Google Cloud project" />
+  </Step>
 
-Restart the API after updating.
+  <Step title="Enable Gmail API and Google Calendar API">
+    In the sidebar go to **APIs & Services → Library**. Search for and enable both:
+    - **Gmail API**
+    - **Google Calendar API**
 
-### Step 2 — Connect in Proply
+    <img src="/images/providers/gmail/step-2-enable-apis.png" alt="Enable Gmail and Calendar APIs" />
+  </Step>
 
-Go to **Settings → Integrations → Gmail** and click **Connect**. Authorize with your Google account — make sure to grant both Gmail and Calendar permissions.
+  <Step title="Configure the OAuth consent screen">
+    Go to **APIs & Services → OAuth consent screen**. Choose **External**, fill in the app name and your email, then add these scopes:
 
-<Warning>
-  If you only grant Gmail scope (not Calendar), calendar sync will not work. You'll need to disconnect and reconnect with both scopes.
-</Warning>
+    ```
+    https://www.googleapis.com/auth/gmail.readonly
+    https://www.googleapis.com/auth/calendar.readonly
+    ```
 
-### Step 3 — Done
+    Add your own email as a test user while in development.
 
-Proply starts syncing on the next 30-minute cycle. Gmail and Calendar both become active.
+    <img src="/images/providers/gmail/step-3-consent-screen.png" alt="OAuth consent screen setup" />
+  </Step>
 
-## How it works
+  <Step title="Create OAuth credentials">
+    Go to **APIs & Services → Credentials → Create Credentials → OAuth client ID**. Choose **Web application** and add your redirect URI:
 
-Every 30 minutes, Proply fetches emails from the last 35 minutes (slightly overlapping to avoid gaps), matches `From` / `To` / `Cc` addresses against existing contacts, and logs:
+    ```
+    https://api.yourdomain.com/api/oauth/google/callback
+    ```
 
-| Direction | Activity type |
-|---|---|
-| You → contact | `email_sent` |
-| Contact → you | `email_received` |
+    <img src="/images/providers/gmail/step-4-create-credentials.png" alt="Create OAuth credentials" />
+  </Step>
 
-## Environment variables
+  <Step title="Copy your Client ID and Secret">
+    After creating, copy the **Client ID** and **Client Secret**.
 
-| Variable | Description |
-|---|---|
-| `GOOGLE_CLIENT_ID` | OAuth app client ID |
-| `GOOGLE_CLIENT_SECRET` | OAuth app client secret |
-| `GOOGLE_OAUTH_REDIRECT_URI` | Must be `https://api.yourdomain.com/api/oauth/google/callback` |
+    <img src="/images/providers/gmail/step-5-copy-credentials.png" alt="Copy Client ID and Client Secret" />
+  </Step>
+
+  <Step title="Add to proply.env">
+    ```bash
+    GOOGLE_CLIENT_ID=your-client-id
+    GOOGLE_CLIENT_SECRET=your-client-secret
+    GOOGLE_OAUTH_REDIRECT_URI=https://api.yourdomain.com/api/oauth/google/callback
+    ```
+
+    Restart your containers after saving.
+  </Step>
+</Steps>
+
+## Connecting in Proply
+
+Once the server is configured, each workspace connects their own Google account:
+
+1. Go to **Settings → Integrations**
+2. Click **+ Add Integration → Google Calendar / Gmail**
+3. Complete the OAuth flow in the popup
+
+<img src="/images/providers/gmail/connect-ui.png" alt="Connect Gmail in Proply UI" />
+
+## What gets synced
+
+| Data | How | Frequency |
+|---|---|---|
+| Sent & received emails | Gmail API | Every 30 min |
+| Calendar events + attendees | Calendar API | Every 10 min |
