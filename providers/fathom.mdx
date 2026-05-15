@@ -1,34 +1,43 @@
 ---
 title: Fathom
-description: Connect your Fathom API key so Proply can search meeting summaries on demand.
+description: Log meeting recordings and summaries on contact timelines.
 ---
 
-## Overview
+## Connect via API Key
 
-Connecting Fathom gives Proply access to your meeting recordings and AI summaries. When a contact is looked up, the agent can retrieve relevant past meetings from Fathom.
+<Steps>
+  <Step title="Get your API key from Fathom">
+    In Fathom go to **Settings → API** and copy your API key.
 
-For real-time meeting events (logging a `meeting_held` activity automatically when a recording is ready), see the [Fathom webhook](/webhooks/fathom).
+    <img src="/images/providers/fathom/step-1-api-key.png" alt="Copy Fathom API key" />
+  </Step>
 
-## Setup
+  <Step title="Connect in Proply">
+    Go to **Settings → Integrations → + Add Integration → Fathom**, paste the key, and click **Connect**.
 
-### 1. Get your API key
+    <img src="/images/providers/fathom/step-2-connect.png" alt="Connect Fathom in Proply" />
+  </Step>
+</Steps>
 
-In Fathom, go to **Settings → Integrations → API** and generate an API key.
+## Set up the Webhook (recommended)
 
-### 2. Connect in Proply
+<Steps>
+  <Step title="Copy your webhook URL from Proply">
+    Go to **Settings → Integrations → Webhooks → Fathom** and copy the URL.
 
-Go to **Settings → Integrations → Fathom**, paste your API key, and click **Connect**.
+    <img src="/images/providers/fathom/step-3-webhook-url.png" alt="Copy webhook URL from Proply" />
+  </Step>
 
-Proply verifies the key against the Fathom meetings endpoint.
+  <Step title="Add the webhook in Fathom">
+    In Fathom go to **Settings → Webhooks → Add Webhook**, paste the URL.
 
-## What this enables
+    Fathom uses `whsec_`-prefixed signing secrets. Copy the signing secret and add it to `proply.env`:
+    ```bash
+    FATHOM_WEBHOOK_SECRET=whsec_your-secret-here
+    ```
 
-Once connected, the Proply agent can:
+    <img src="/images/providers/fathom/step-4-add-webhook.png" alt="Add webhook in Fathom" />
+  </Step>
+</Steps>
 
-- Search past Fathom recordings by contact or company
-- Pull AI summaries into contact context
-- Retrieve action items from past meetings
-
-## Also set up the webhook
-
-The API key integration is for on-demand lookups. To automatically log meetings as they happen, also configure the [Fathom webhook →](/webhooks/fathom)
+See the [Fathom webhook reference](/webhooks/fathom) for payload details.
