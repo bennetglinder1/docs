@@ -1,0 +1,218 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Proply API",
+    "version": "1.0.0",
+    "description": "REST API for Proply — the CRM memory layer for AI agents."
+  },
+  "servers": [
+    { "url": "https://api.yourdomain.com", "description": "Self-hosted" }
+  ],
+  "security": [{ "bearerAuth": [] }],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer" }
+    }
+  },
+  "paths": {
+    "/api/contacts": {
+      "get": {
+        "operationId": "listContacts",
+        "summary": "List contacts",
+        "tags": ["Contacts"],
+        "parameters": [
+          { "name": "workspaceId", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "filter", "in": "query", "schema": { "type": "string", "enum": ["identified","aware","interested","evaluating","client"] } },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["prospect","client"] } },
+          { "name": "source", "in": "query", "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50 } },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object", "properties": { "contacts": { "type": "array", "items": { "type": "object" } }, "total": { "type": "integer" }, "limit": { "type": "integer" }, "offset": { "type": "integer" } } } } } }
+        }
+      },
+      "post": {
+        "operationId": "createContact",
+        "summary": "Create contact",
+        "tags": ["Contacts"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["workspaceId","email"], "properties": { "workspaceId": { "type": "string" }, "email": { "type": "string" }, "firstName": { "type": "string" }, "lastName": { "type": "string" }, "company": { "type": "string" }, "jobTitle": { "type": "string" }, "phone": { "type": "string" }, "source": { "type": "string" }, "tags": { "type": "array", "items": { "type": "string" } }, "notes": { "type": "string" }, "lead_source": { "type": "string" } } } } }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "type": "object", "properties": { "contact": { "type": "object" } } } } } },
+          "409": { "description": "Contact already exists" }
+        }
+      }
+    },
+    "/api/contacts/{id}": {
+      "get": {
+        "operationId": "getContact",
+        "summary": "Get contact",
+        "tags": ["Contacts"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "Contact with activities, company, and memories" },
+          "404": { "description": "Not found" }
+        }
+      },
+      "patch": {
+        "operationId": "updateContact",
+        "summary": "Update contact",
+        "tags": ["Contacts"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "type": "object", "properties": { "email": { "type": "string" }, "firstName": { "type": "string" }, "lastName": { "type": "string" }, "jobTitle": { "type": "string" }, "pipeline_stage": { "type": "string", "enum": ["identified","aware","interested","evaluating","client"] }, "status": { "type": "string", "enum": ["prospect","client"] }, "deal_value": { "type": "number" }, "tags": { "type": "array", "items": { "type": "string" } } } } } }
+        },
+        "responses": { "200": { "description": "Updated contact" } }
+      },
+      "delete": {
+        "operationId": "deleteContact",
+        "summary": "Delete contact",
+        "tags": ["Contacts"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" } } } } } } }
+      }
+    },
+    "/api/contacts/{id}/memories": {
+      "post": {
+        "operationId": "addContactMemory",
+        "summary": "Add memory to contact",
+        "tags": ["Contacts"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["content"], "properties": { "content": { "type": "string" }, "category": { "type": "string", "default": "General" } } } } }
+        },
+        "responses": { "200": { "description": "Created memory" } }
+      }
+    },
+    "/api/contacts/import": {
+      "post": {
+        "operationId": "importContacts",
+        "summary": "Bulk import contacts",
+        "tags": ["Contacts"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["workspaceId","rows"], "properties": { "workspaceId": { "type": "string" }, "rows": { "type": "array", "items": { "type": "object", "properties": { "email": { "type": "string" }, "firstName": { "type": "string" }, "lastName": { "type": "string" }, "company": { "type": "string" } } } } } } }
+        },
+        "responses": { "200": { "description": "Import results" } }
+      }
+    },
+    "/api/companies/list": {
+      "get": {
+        "operationId": "listCompanies",
+        "summary": "List companies",
+        "tags": ["Companies"],
+        "parameters": [
+          { "name": "workspaceId", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50 } },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": { "200": { "description": "List of companies" } }
+      }
+    },
+    "/api/companies/{id}": {
+      "patch": {
+        "operationId": "updateCompany",
+        "summary": "Update company",
+        "tags": ["Companies"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "Updated company" } }
+      }
+    },
+    "/api/companies/enrich": {
+      "post": {
+        "operationId": "enrichCompany",
+        "summary": "Enrich company",
+        "tags": ["Companies"],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["workspaceId","companyId"], "properties": { "workspaceId": { "type": "string" }, "companyId": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Enriched company data" } }
+      }
+    },
+    "/api/workspace-memories": {
+      "get": {
+        "operationId": "listMemories",
+        "summary": "List memories",
+        "tags": ["Memories"],
+        "parameters": [
+          { "name": "workspaceId", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "contact_id", "in": "query", "schema": { "type": "string" } },
+          { "name": "company_id", "in": "query", "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 100 } }
+        ],
+        "responses": { "200": { "description": "List of memories" } }
+      }
+    },
+    "/api/workspace-memories/ingest": {
+      "post": {
+        "operationId": "ingestMemory",
+        "summary": "Ingest memory",
+        "tags": ["Memories"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["workspaceId","content"], "properties": { "workspaceId": { "type": "string" }, "content": { "type": "string" }, "contact_id": { "type": "string" }, "source": { "type": "string", "default": "manual" }, "metadata": { "type": "object" } } } } }
+        },
+        "responses": { "200": { "description": "Created memory" } }
+      }
+    },
+    "/api/workspace-memories/{id}": {
+      "patch": {
+        "operationId": "updateMemory",
+        "summary": "Update memory",
+        "tags": ["Memories"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object", "properties": { "content": { "type": "string" }, "is_active": { "type": "boolean" } } } } } },
+        "responses": { "200": { "description": "Updated memory" } }
+      },
+      "delete": {
+        "operationId": "deleteMemory",
+        "summary": "Delete memory",
+        "tags": ["Memories"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/public/ingest": {
+      "post": {
+        "operationId": "ingestSignal",
+        "summary": "Ingest signal",
+        "tags": ["Signals"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["workspace_id","token","source"], "properties": { "workspace_id": { "type": "string" }, "token": { "type": "string", "description": "Your SIGNAL_HMAC_SECRET" }, "source": { "type": "string", "example": "rb2b" }, "email": { "type": "string" }, "first_name": { "type": "string" }, "last_name": { "type": "string" }, "company": { "type": "string" }, "page": { "type": "string" }, "linkedin_url": { "type": "string" }, "job_title": { "type": "string" } } } } }
+        },
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object", "properties": { "ok": { "type": "boolean" } } } } } } }
+      }
+    },
+    "/api/api-keys": {
+      "get": {
+        "operationId": "listApiKeys",
+        "summary": "List API keys",
+        "tags": ["API Keys"],
+        "parameters": [{ "name": "workspaceId", "in": "query", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "List of API keys" } }
+      },
+      "post": {
+        "operationId": "createApiKey",
+        "summary": "Create API key",
+        "tags": ["API Keys"],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["workspaceId","name"], "properties": { "workspaceId": { "type": "string" }, "name": { "type": "string" } } } } } },
+        "responses": { "201": { "description": "Created API key — store the key value, it won't be shown again" } }
+      }
+    },
+    "/api/api-keys/{id}": {
+      "delete": {
+        "operationId": "deleteApiKey",
+        "summary": "Delete API key",
+        "tags": ["API Keys"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "OK" } }
+      }
+    }
+  }
+}
