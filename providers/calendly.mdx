@@ -1,60 +1,34 @@
 ---
 title: Calendly
-description: Connect Calendly with a personal access token for context, and a webhook for booking events.
+description: Connect your Calendly personal access token so Proply can query your scheduling data.
 ---
 
 ## Overview
 
-Calendly works in two ways inside Proply:
+Connecting Calendly gives Proply access to your event types and scheduled meetings. This lets the agent answer questions about your scheduling context when working with a contact.
 
-1. **Personal access token** — Proply can query your Calendly data (event types, scheduled events) on demand
-2. **Webhook** — Calendly pushes booking and cancellation events; Proply logs them as `meeting_scheduled` / `meeting_cancelled` activities and **creates new contacts** from bookings
+For real-time booking events (automatically creating contacts and logging `meeting_scheduled` when someone books), see the [Calendly webhook](/webhooks/calendly).
 
-Both are independent — you can set up one or both.
+## Setup
 
-## Personal access token setup
-
-### 1. Generate a token
+### 1. Generate a personal access token
 
 In Calendly, go to **Integrations → API & Webhooks → Personal Access Tokens** and generate a new token.
 
 ### 2. Connect in Proply
 
-Go to **Settings → Integrations → Calendly**, paste your token, and click **Connect**. Proply verifies it against `/users/me`.
+Go to **Settings → Integrations → Calendly**, paste your token, and click **Connect**.
 
-## Webhook setup
+Proply verifies it against the Calendly API and confirms your account name.
 
-The webhook is the core signal — every new booking creates or updates a contact and logs the meeting.
+## What this enables
 
-### 1. Get your webhook URL
+Once connected, the Proply agent can:
 
-```
-https://api.yourdomain.com/inbound/calendly/<YOUR_WORKSPACE_ID>
-```
+- Check your available event types
+- Query scheduled meetings for a contact
+- Pull Calendly context into conversations
 
-### 2. Add in Calendly
+## Also set up the webhook
 
-Go to **Integrations → API & Webhooks → Webhooks** (requires Professional plan or higher), click **Create Webhook**, and add your URL.
-
-Select events:
-- `invitee.created` — new booking
-- `invitee.canceled` — cancellation
-
-### 3. Set the HMAC secret
-
-```bash
-CALENDLY_WEBHOOK_SECRET=your-signing-secret
-```
-
-Restart the worker after updating.
-
-## What gets logged
-
-| Event | Activity | Creates contact? |
-|---|---|---|
-| `invitee.created` | `meeting_scheduled` | **Yes** — a booking is strong intent |
-| `invitee.canceled` | `meeting_cancelled` | No |
-
-## Webhook reference
-
-See [Calendly webhook reference](/webhooks/calendly) for full payload details.
+The token integration is for on-demand queries. To automatically create contacts and log bookings as they happen, also configure the [Calendly webhook →](/webhooks/calendly)
