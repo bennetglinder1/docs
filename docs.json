@@ -106,17 +106,6 @@
         ]
       },
       {
-        "tab": "CLI",
-        "groups": [
-          {
-            "group": "CLI",
-            "pages": [
-              "cli/introduction"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "MCP",
         "groups": [
           {
