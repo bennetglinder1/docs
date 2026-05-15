@@ -60,8 +60,7 @@
               {
                 "group": "Intent Signals",
                 "pages": [
-                  "providers/rb2b",
-                  "providers/signalbase"
+                  "providers/rb2b"
                 ]
               },
               {
@@ -69,7 +68,6 @@
                 "pages": [
                   "providers/hubspot",
                   "providers/pipedrive",
-                  "providers/airtable",
                   "providers/attio"
                 ]
               },
