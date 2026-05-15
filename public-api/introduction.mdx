@@ -1,4 +1,31 @@
 ---
-title: "Public API"
-description: "Introduction to the Public API"
+title: Introduction
+description: REST API for Proply — build agents, automations, and integrations on top of your CRM data.
 ---
+
+## Authentication
+
+Generate an API key in **Settings → API**, then pass it as a Bearer token:
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  https://api.yourdomain.com/api/contacts?workspaceId=YOUR_WORKSPACE_ID
+```
+
+## Base URL
+
+| Environment | Base URL |
+|---|---|
+| Self-hosted | `https://api.yourdomain.com/api` |
+
+## Workspace ID
+
+Every request is scoped to a workspace. Pass `workspaceId` as a query param on GET requests or in the body on POST/PATCH.
+
+## Errors
+
+All errors return JSON:
+
+```json
+{ "error": "error_code" }
+```
