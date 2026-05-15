@@ -36,6 +36,7 @@
               {
                 "group": "Communication",
                 "pages": [
+                  "providers/gmail",
                   "providers/smtp",
                   "providers/linkedin",
                   "providers/slack"
@@ -83,7 +84,6 @@
                 "group": "Webhooks",
                 "pages": [
                   "webhooks/overview",
-                  "webhooks/linkedin",
                   "webhooks/instantly",
                   "webhooks/fireflies",
                   "webhooks/fathom",
