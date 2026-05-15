@@ -1,15 +1,15 @@
 ---
-title: Introduction
-description: REST API for Proply — build agents, automations, and integrations on top of your CRM data.
+title: API Overview
+description: Getting started with the Proply Public API
 ---
 
 ## Authentication
 
-Generate an API key in **Settings → API**, then pass it as a Bearer token:
+Generate an API key in **Settings → API**. Pass it as a Bearer token on every request:
 
 ```bash
 curl -H "Authorization: Bearer YOUR_API_KEY" \
-  https://api.yourdomain.com/api/contacts?workspaceId=YOUR_WORKSPACE_ID
+  "https://api.yourdomain.com/api/contacts?workspaceId=YOUR_WORKSPACE_ID"
 ```
 
 ## Base URL
@@ -17,15 +17,80 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
 | Environment | Base URL |
 |---|---|
 | Self-hosted | `https://api.yourdomain.com/api` |
+| Local dev | `http://localhost:3000/api` |
 
 ## Workspace ID
 
-Every request is scoped to a workspace. Pass `workspaceId` as a query param on GET requests or in the body on POST/PATCH.
+Every request is scoped to a workspace. Pass `workspaceId` as a query param on GET requests, or in the request body on POST/PATCH.
+
+```bash
+# GET — query param
+GET /api/contacts?workspaceId=uuid
+
+# POST — request body
+POST /api/contacts
+{ "workspaceId": "uuid", ... }
+```
+
+Find your workspace ID in **Settings → API** or from the URL when logged in.
 
 ## Errors
 
-All errors return JSON:
+All errors return JSON with a machine-readable code:
 
 ```json
 { "error": "error_code" }
+```
+
+| Code | Meaning |
+|---|---|
+| `workspace_id_required` | Missing `workspaceId` |
+| `workspace_not_found_or_unauthorized` | Invalid workspace or no access |
+| `contact_not_found` | Contact doesn't exist |
+| `contact_already_exists` | Duplicate email in workspace |
+| `invalid_email_format` | Email failed validation |
+| `internal_error` | Server error |
+
+## Quick examples
+
+### Create a contact
+
+```bash
+curl -X POST "https://api.yourdomain.com/api/contacts" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workspaceId": "your-workspace-id",
+    "email": "john@acme.com",
+    "firstName": "John",
+    "lastName": "Smith",
+    "company": "Acme Corp"
+  }'
+```
+
+### Ingest a signal (custom capture)
+
+```bash
+curl -X POST "https://api.yourdomain.com/public/ingest" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workspace_id": "your-workspace-id",
+    "token": "your-signal-hmac-secret",
+    "source": "website",
+    "email": "visitor@acme.com",
+    "company": "Acme Corp",
+    "page": "/pricing"
+  }'
+```
+
+### Add a memory to a contact
+
+```bash
+curl -X POST "https://api.yourdomain.com/api/contacts/CONTACT_ID/memories" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Mentioned they are evaluating tools for Q3",
+    "category": "General"
+  }'
 ```
