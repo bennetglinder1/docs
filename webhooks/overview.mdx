@@ -1,13 +1,13 @@
 ---
-title: Webhook Overview
-description: Every inbound webhook endpoint Proply exposes — URLs, payloads, and HMAC secrets.
+title: "Webhook Overview"
+description: "Every inbound webhook endpoint Proply exposes — URLs, payloads, and HMAC secrets."
 ---
 
 ## How webhooks work
 
 Proply's worker exposes a webhook server at `https://api.yourdomain.com/inbound/`. Each source gets its own path with your workspace ID embedded in the URL.
 
-```
+```text
 https://api.yourdomain.com/inbound/<source>/<workspaceId>
 ```
 
@@ -20,8 +20,8 @@ All handlers return `{ "ok": true }` immediately — retries won't cause duplica
 ## Available endpoints
 
 | Source | Endpoint | Creates contacts? |
-|---|---|---|
-| [Instantly](/webhooks/instantly) | `/inbound/instantly/:workspaceId` | Yes (reply only) |
+| --- | --- | --- |
+| [Instantly](/webhooks/instantly) | `/inbound/instantly/:workspaceId` | Yes |
 | [Fireflies](/webhooks/fireflies) | `/inbound/fireflies/:workspaceId` | No |
 | [Fathom](/webhooks/fathom) | `/inbound/fathom/:workspaceId` | No |
 | [RB2B](/webhooks/rb2b) | `/inbound/rb2b/:workspaceId` | Yes |
