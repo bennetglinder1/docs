@@ -1,0 +1,55 @@
+---
+title: Fathom Webhook
+description: Log meeting recordings from Fathom on contact timelines.
+---
+
+## Endpoint
+
+```
+POST https://api.yourdomain.com/inbound/fathom/:workspaceId
+```
+
+Also accepts:
+```
+POST https://api.yourdomain.com/inbound/fathom?workspace_id=<id>
+```
+
+## Auth
+
+Fathom uses svix-based HMAC signing. Set your Fathom webhook secret in `proply.env`:
+
+```bash
+FATHOM_WEBHOOK_SECRET=whsec_your-signing-secret
+```
+
+Proply verifies the `webhook-signature`, `webhook-id`, and `webhook-timestamp` headers automatically. Timestamps older than 5 minutes are rejected.
+
+## Setup in Fathom
+
+See [Fathom provider setup](/providers/fathom) for full webhook configuration steps.
+
+## Payload
+
+```json
+{
+  "id": "rec_abc123",
+  "title": "Discovery call — Acme Corp",
+  "recording_start_time": "2026-05-14T14:00:00Z",
+  "share_url": "https://fathom.video/call/abc123",
+  "default_summary": {
+    "markdown_formatted": "Key points: pricing discussion, Q3 timeline..."
+  },
+  "calendar_invitees": [
+    { "name": "Jane Smith", "email": "jane@acme.com" },
+    { "name": "You", "email": "you@company.com" }
+  ]
+}
+```
+
+## Activity logged
+
+`meeting_held` on every matched invitee contact.
+
+<Note>
+  Fathom is **update-only** — invitees must already exist as contacts. New contacts are not created from meeting recordings.
+</Note>
