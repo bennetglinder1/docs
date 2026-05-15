@@ -1,34 +1,57 @@
 ---
-title: "Fireflies.ai"
-description: "Push meeting transcripts and summaries into Proply automatically"
+title: Fireflies.ai
+description: Connect Fireflies with an API key for transcript search, and a webhook for real-time meeting events.
 ---
 
-Fireflies sends a webhook after every recorded meeting. Proply receives it, matches the participants to contacts, and logs the meeting with a summary to the activity timeline.
+## Overview
 
-## What gets ingested
+Fireflies works in two ways inside Proply:
 
-* Meeting title and date
-* Participant emails (matched to contacts)
-* AI-generated summary pushed to contact memory
+1. **API key** — Proply can search and retrieve transcripts from Fireflies on demand (e.g. when a contact is looked up by the agent)
+2. **Webhook** — Fireflies pushes a notification when a meeting recording is ready; Proply logs a `meeting_held` activity on matched contacts
 
-## Step 1: Get your webhook URL
+Both are independent — you can set up one or both.
 
-Open Proply → **Settings → Integrations → Fireflies** → copy your webhook URL.
+## API key setup
 
-Format: `https://api.yourdomain.com/inbound/fireflies?workspace_id=<your-id>`
+### 1. Get your Fireflies API key
 
-## Step 2: Add the webhook in Fireflies
+In Fireflies, go to **Integrations → API** and copy your API key.
 
-1. Go to [app.fireflies.ai](https://app.fireflies.ai) → **Integrations → Webhooks**
-2. Click **Add Webhook**
-3. Paste your Proply webhook URL
-4. Select trigger: **Meeting Completed**
-5. Click **Save**
+### 2. Connect in Proply
 
-## Step 3: Verify
+Go to **Settings → Integrations → Fireflies**, paste your API key, and click **Connect**. Proply verifies it by calling the Fireflies GraphQL API.
 
-Record a test meeting with Fireflies. After it processes, the meeting should appear in the contact's timeline in Proply within a few minutes.
+Once connected, the Proply agent can search your meeting transcripts when looking up a contact.
 
-<Note>
-  Fireflies only sends webhooks for meetings where at least one participant email matches a contact in your Proply workspace. New contacts are not created automatically from Fireflies.
-</Note>
+## Webhook setup
+
+The webhook logs meetings automatically as they happen — no polling needed.
+
+### 1. Get your webhook URL
+
+```
+https://api.yourdomain.com/inbound/fireflies/<YOUR_WORKSPACE_ID>
+```
+
+### 2. Add in Fireflies
+
+Go to **Integrations → Webhooks** in Fireflies and add the URL above.
+
+### 3. Set the HMAC secret
+
+```bash
+FIREFLIES_WEBHOOK_SECRET=your-signing-secret
+```
+
+Restart the worker after updating.
+
+## What gets logged
+
+`meeting_held` on every matched participant contact.
+
+**Update-only** — Fireflies never creates new contacts from participants.
+
+## Webhook reference
+
+See [Fireflies webhook reference](/webhooks/fireflies) for full payload details.
