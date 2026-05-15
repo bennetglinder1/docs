@@ -16,9 +16,9 @@
           {
             "group": "Getting Started",
             "pages": [
-              "getting-started/introduction-1",
+              "getting-started/introduction",
               "getting-started/how-it-works",
-              "getting-started/quickstart-1"
+              "getting-started/quickstart"
             ]
           },
           {
