@@ -1,0 +1,139 @@
+---
+title: "Quickstart"
+description: "Get Proply running locally and connect your first integration in under 15 minutes"
+---
+
+<Note>
+  This guide is for **local development**. To deploy on a server, see [Docker Compose](/installation/docker-compose).
+</Note>
+
+## Prerequisites
+
+* [Node.js 20+](https://nodejs.org) and [pnpm](https://pnpm.io) — `npm install -g pnpm`
+* [Docker](https://docs.docker.com/get-docker/) — used for Redis only
+* A [Supabase](https://supabase.com) project — free tier works
+* An [Anthropic API key](https://console.anthropic.com)
+
+---
+
+## Step 1: Clone and install
+
+```bash
+git clone https://github.com/bennetglinder1/proply-crm.git
+cd proply-crm
+pnpm install
+```
+
+## Step 2: Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill in:
+
+```bash
+# Supabase — Settings → API
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+
+# Anthropic
+ANTHROPIC_API_KEY=sk-ant-...
+
+# Generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+ENCRYPTION_KEY=
+API_SECRET=
+```
+
+## Step 3: Run the database schema
+
+<Warning>
+  Required on first setup. Skip this and the app will start but nothing will work.
+</Warning>
+
+Open your Supabase project → **SQL Editor** → paste and run the full contents of [`supabase/schema.sql`](https://github.com/bennetglinder1/proply-crm/blob/main/supabase/schema.sql).
+
+## Step 4: Start Redis
+
+```bash
+docker compose -f docker-compose.dev.yaml up -d
+```
+
+This starts Redis on `localhost:6379`. The API and worker need it to run.
+
+## Step 5: Start the app
+
+```bash
+pnpm dev
+```
+
+Starts all four services in parallel:
+
+| Service | URL | What it does |
+|---|---|---|
+| API | `http://localhost:3000` | REST API, identity resolution, signal ingestion |
+| Frontend | `http://localhost:5173` | Web UI |
+| MCP server | `http://localhost:3001` | Agent tool interface |
+| Worker | background | AI synthesis, live sync, ICP scoring |
+
+## Step 6: Connect your first integration
+
+Open `http://localhost:5173` → **Settings → Integrations** and connect at least one source:
+
+<CardGroup cols={2}>
+  <Card title="HubSpot" icon="database" href="/providers/overview">
+    One-time import of existing contacts and deal history.
+  </Card>
+  <Card title="Gmail" icon="envelope" href="/providers/overview">
+    Ingest email signals in real time via OAuth.
+  </Card>
+  <Card title="LinkedIn" icon="linkedin" href="/providers/linkedin">
+    Pull connection requests and messages via Unipile.
+  </Card>
+  <Card title="Webhooks" icon="bolt" href="/providers/overview">
+    Connect any custom signal source with HMAC auth.
+  </Card>
+</CardGroup>
+
+## Step 7: Connect your AI agent via MCP
+
+Add Proply to your `mcp.json` (Claude Desktop, Cursor, or any MCP host):
+
+```json
+{
+  "mcpServers": {
+    "proply": {
+      "command": "npx",
+      "args": ["-y", "@goproply/mcp"],
+      "env": {
+        "PROPLY_API_KEY": "your-api-key",
+        "PROPLY_API_URL": "http://localhost:3000"
+      }
+    }
+  }
+}
+```
+
+Generate your API key under **Settings → API Keys**.
+
+---
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="How it works" icon="diagram-project" href="/getting-started/how-it-works">
+    Identity resolution, signal ingestion, and the unified record architecture.
+  </Card>
+  <Card title="MCP tools reference" icon="robot" href="/mcp/introduction">
+    Full reference for all MCP tools your agents can call.
+  </Card>
+  <Card title="Production deploy" icon="server" href="/installation/docker-compose">
+    Deploy on your own server with Docker Compose.
+  </Card>
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    Integrate via REST API from any language or platform.
+  </Card>
+</CardGroup>
