@@ -1,34 +1,42 @@
 ---
 title: Fireflies.ai
-description: Connect your Fireflies API key so Proply can search transcripts on demand.
+description: Pull meeting transcripts and summaries into contact timelines.
 ---
 
-## Overview
+## Connect via API Key
 
-Connecting Fireflies gives Proply access to your meeting transcripts. When a contact is looked up, the agent can pull relevant past meetings directly from Fireflies.
+<Steps>
+  <Step title="Get your API key from Fireflies">
+    In Fireflies go to **Settings → API** and copy your API key.
 
-For real-time meeting events (logging a `meeting_held` activity automatically when a recording is ready), see the [Fireflies webhook](/webhooks/fireflies).
+    <img src="/images/providers/fireflies/step-1-api-key.png" alt="Copy Fireflies API key" />
+  </Step>
 
-## Setup
+  <Step title="Connect in Proply">
+    Go to **Settings → Integrations → + Add Integration → Fireflies**, paste the key, and click **Connect**.
 
-### 1. Get your API key
+    Proply verifies the key by querying the Fireflies GraphQL API.
 
-In Fireflies, go to **Integrations → API** and copy your API key.
+    <img src="/images/providers/fireflies/step-2-connect.png" alt="Connect Fireflies in Proply" />
+  </Step>
+</Steps>
 
-### 2. Connect in Proply
+## Set up the Webhook (recommended)
 
-Go to **Settings → Integrations → Fireflies**, paste your API key, and click **Connect**.
+The webhook lets Proply log a meeting activity on contact timelines as soon as a transcript is ready.
 
-Proply verifies the key by calling the Fireflies GraphQL API. If the key is valid, you'll see your Fireflies account email confirmed.
+<Steps>
+  <Step title="Copy your webhook URL from Proply">
+    Go to **Settings → Integrations → Webhooks → Fireflies** and copy the URL.
 
-## What this enables
+    <img src="/images/providers/fireflies/step-3-webhook-url.png" alt="Copy webhook URL from Proply" />
+  </Step>
 
-Once connected, the Proply agent can:
+  <Step title="Add the webhook in Fireflies">
+    In Fireflies go to **Integrations → Webhooks → Add webhook**, paste the URL, and select **Transcript Ready**.
 
-- Search transcripts by contact name or company
-- Pull meeting summaries into contact context
-- Answer questions like "what did we discuss with Acme Corp last month?"
+    <img src="/images/providers/fireflies/step-4-add-webhook.png" alt="Add webhook in Fireflies" />
+  </Step>
+</Steps>
 
-## Also set up the webhook
-
-The API key integration is for on-demand lookups. To automatically log meetings as they happen, also configure the [Fireflies webhook →](/webhooks/fireflies)
+See the [Fireflies webhook reference](/webhooks/fireflies) for payload details.
