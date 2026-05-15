@@ -20,25 +20,29 @@ All handlers return `{ "ok": true }` immediately — retries won't cause duplica
 | [LinkedIn](/webhooks/linkedin) | `/inbound/linkedin/:workspaceId` | Yes |
 | [Instantly](/webhooks/instantly) | `/inbound/instantly/:workspaceId` | No |
 | [Fireflies](/webhooks/fireflies) | `/inbound/fireflies/:workspaceId` | No |
+| [Fathom](/webhooks/fathom) | `/inbound/fathom/:workspaceId` | No |
 | [RB2B](/webhooks/rb2b) | `/inbound/rb2b/:workspaceId` | Yes |
 | [Calendly](/webhooks/calendly) | `/inbound/calendly/:workspaceId` | Yes |
 | [Custom capture](/webhooks/custom) | `/api/v1/capture` (API key auth) | No |
 
 ## HMAC verification
 
-Set a shared secret for each source in `proply.env`. Proply validates the `x-proply-signature` or `x-hub-signature-256` header using `HMAC-SHA256`.
+Set a shared secret for each source in `proply.env`. Proply validates the signature header using `HMAC-SHA256`.
 
 ```bash
-# proply.env
 LINKEDIN_WEBHOOK_SECRET=your-secret
 INSTANTLY_WEBHOOK_SECRET=your-secret
 CALENDLY_WEBHOOK_SECRET=your-secret
 FIREFLIES_WEBHOOK_SECRET=your-secret
+FATHOM_WEBHOOK_SECRET=whsec_your-svix-secret
 RB2B_WEBHOOK_SECRET=your-secret
-STRIPE_INBOUND_WEBHOOK_SECRET=your-secret
 ```
 
-If a secret is **not set**, the signature check is skipped — fine for local dev, but set secrets in production.
+<Note>
+  Fathom uses svix-based signing (`webhook-signature` header) with timestamp tolerance. All other sources use standard `x-proply-signature: sha256=<hmac>`.
+</Note>
+
+If a secret is **not set**, the signature check is skipped — fine for local dev, set secrets in production.
 
 ## Finding your workspace ID
 
