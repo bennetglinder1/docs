@@ -1,34 +1,38 @@
 ---
-title: "HubSpot"
-description: "Import contacts, companies, and deals from HubSpot"
+title: HubSpot
+description: Connect HubSpot to sync contacts and deals into Proply.
 ---
 
-HubSpot is a one-time bootstrap import. Proply pulls your existing contacts, companies, and deals and merges them into the unified record. After import, Proply operates independently — there is no ongoing sync back to HubSpot.
+## Setup
 
-## What gets imported
+<Steps>
+  <Step title="Open Private Apps in HubSpot">
+    In HubSpot go to **Settings → Integrations → Private Apps** and click **Create a private app**.
 
-* Contacts — name, email, company, phone, HubSpot owner
-* Companies — name, domain, industry, location
-* Deals — name, value, stage, close date
+    <img src="/images/providers/hubspot/step-1-private-apps.png" alt="Open Private Apps in HubSpot" />
+  </Step>
 
-## Step 1: Connect HubSpot
+  <Step title="Name the app and select scopes">
+    Give the app a name (e.g. "Proply") then go to the **Scopes** tab and enable:
 
-1. Open Proply → **Settings → Integrations → CRM**
-2. Click **Connect HubSpot**
-3. Complete the HubSpot OAuth flow — you will be redirected back automatically
-4. The connection is saved encrypted to your workspace
+    ```
+    crm.objects.contacts.read
+    crm.objects.deals.read
+    crm.objects.companies.read
+    ```
 
-## Step 2: Run the import
+    <img src="/images/providers/hubspot/step-2-scopes.png" alt="Select HubSpot scopes" />
+  </Step>
 
-1. After connecting, click **Import from HubSpot**
-2. Select which object types to import (contacts, companies, deals)
-3. Optionally search for specific records or import all
-4. Click **Import** — Proply runs identity resolution and merges duplicates automatically
+  <Step title="Create and copy the access token">
+    Click **Create app** then copy the **Access token** shown.
 
-## Step 3: Verify
+    <img src="/images/providers/hubspot/step-3-access-token.png" alt="Copy HubSpot access token" />
+  </Step>
 
-Open **Contacts** in Proply. Your HubSpot contacts should appear with their company and deal associations intact.
+  <Step title="Connect in Proply">
+    Go to **Settings → Integrations → + Add Integration → HubSpot**, paste the token, and click **Connect**.
 
-<Note>
-  Importing the same contacts twice is safe — Proply deduplicates on email and HubSpot ID. Existing records are updated, not duplicated.
-</Note>
+    <img src="/images/providers/hubspot/step-4-connect.png" alt="Connect HubSpot in Proply" />
+  </Step>
+</Steps>
