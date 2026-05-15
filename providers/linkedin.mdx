@@ -1,6 +1,6 @@
 ---
-title: LinkedIn
-description: Log connection requests, messages, and profile visits via Unipile.
+title: "LinkedIn"
+description: "Log connection requests, messages, and profile visits via Unipile."
 ---
 
 <Note>
@@ -13,13 +13,27 @@ description: Log connection requests, messages, and profile visits via Unipile.
   <Step title="Create a Unipile account">
     Sign up at [unipile.com](https://unipile.com). You need a paid plan to use the LinkedIn messaging API.
 
+    <Frame>
+      <img
+        src="/images/Screenshot-2026-05-15-at-11.08.31-AM.png"
+        alt="Screenshot 2026 05 15 At 11 08 31 AM"
+        title="Screenshot 2026 05 15 At 11 08 31 AM"
+        style={{ width:"53%" }}
+      />
+    </Frame>
   </Step>
-
   <Step title="Get your API Key and DSN">
     In the Unipile dashboard go to **Settings → API**. Copy your **API Key** and **DSN** (the webhook base URL).
 
+    <Frame>
+      <img
+        src="/images/Screenshot-2026-05-15-at-11.09.53-AM.png"
+        alt="Screenshot 2026 05 15 At 11 09 53 AM"
+        title="Screenshot 2026 05 15 At 11 09 53 AM"
+        style={{ width:"54%" }}
+      />
+    </Frame>
   </Step>
-
   <Step title="Add to proply.env">
     ```bash
     UNIPILE_API_KEY=your-api-key
@@ -29,27 +43,38 @@ description: Log connection requests, messages, and profile visits via Unipile.
 
     Restart your containers after saving.
   </Step>
-
   <Step title="Connect your LinkedIn account in Unipile">
     In the Unipile dashboard go to **Accounts → Add account → LinkedIn** and follow the login flow.
-
   </Step>
-
   <Step title="Register the Connections webhook">
     In Unipile go to **Webhooks → Add webhook**. Set:
+
     - **Event:** On new relation
     - **URL:**
-    ```
+
+    ```text
     https://api.yourdomain.com/inbound/linkedin?workspace_id=YOUR_WORKSPACE_ID&secret=YOUR_LINKEDIN_WEBHOOK_SECRET
     ```
 
+    <img
+      src="/images/Screenshot-2026-05-15-at-11.13.24-AM.png"
+      alt="Screenshot 2026 05 15 At 11 13 24 AM"
+      title="Screenshot 2026 05 15 At 11 13 24 AM"
+      style={{ width:"52%" }}
+    />
   </Step>
-
   <Step title="Register the Messages webhook">
     Add a second webhook:
+
     - **Event:** On new message
     - **URL:** same URL as above
 
+    <img
+      src="/images/Screenshot-2026-05-15-at-11.13.51-AM.png"
+      alt="Screenshot 2026 05 15 At 11 13 51 AM"
+      title="Screenshot 2026 05 15 At 11 13 51 AM"
+      style={{ width:"53%" }}
+    />
   </Step>
 </Steps>
 
@@ -60,7 +85,7 @@ description: Log connection requests, messages, and profile visits via Unipile.
 ## What gets logged
 
 | Event | Activity logged |
-|---|---|
+| --- | --- |
 | New connection accepted | `linkedin_connection` |
 | Inbound DM | `linkedin_message_received` |
 | Outbound DM | `linkedin_message_sent` |
