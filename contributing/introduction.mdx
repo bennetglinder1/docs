@@ -1,4 +1,127 @@
 ---
 title: "Contributing"
-description: "How to contribute to the project"
+description: "How to get started developing and contributing to Proply"
 ---
+
+## Architecture overview
+
+Before writing any code, read the [how it works](/getting-started/how-it-works) page. It explains how the three services fit together and how data flows through the system.
+
+## Repository overview
+
+Proply is open-source and the code is at [github.com/bennetglinder1/proply-crm](https://github.com/bennetglinder1/proply-crm).
+
+It's a **pnpm monorepo** with three apps:
+
+| App | What it is |
+|-----|-----------|
+| `apps/api` | Express API — all REST routes, OAuth, enrichment |
+| `apps/worker` | Background worker — pollers (Gmail, Calendar, SMTP, Slack) + inbound webhook handlers |
+| `apps/frontend` | React + Vite SPA |
+
+Plus `packages/core` — shared DB helpers, contact resolution, and type definitions used by both api and worker.
+
+The main scripts are:
+
+```bash
+pnpm dev          # start all apps in development mode
+pnpm typecheck    # TypeScript check across all apps
+pnpm lint         # lint all apps
+pnpm test         # run all tests
+```
+
+### API
+
+Express.js with ESM throughout. Routes live in `apps/api/src/routes/` split into:
+- `/api/*` — internal app routes (Supabase JWT auth)
+- `/v1/*` — public API routes (API key auth)
+- `/inbound/*` — unauthenticated webhook receivers (routed via Caddy to the worker)
+
+### Worker
+
+Node.js service that runs pollers on a schedule (Gmail every 30min, Calendar every 10min, SMTP every 15min, Slack hourly) and handles inbound webhooks from Instantly, Fireflies, Fathom, Calendly, and LinkedIn/Unipile.
+
+### Frontend
+
+React + Vite + TailwindCSS + shadcn/ui. No Next.js — pure SPA served by nginx in production.
+
+### Database
+
+Supabase (Postgres). Schema is in `supabase/schema.sql`. No ORM — raw Supabase client queries.
+
+## Development setup
+
+<Steps>
+  <Step title="Clone and install">
+    ```bash
+    git clone https://github.com/bennetglinder1/proply-crm.git
+    cd proply-crm
+    pnpm install
+    ```
+  </Step>
+
+  <Step title="Configure environment">
+    ```bash
+    cp proply.env.example proply.env
+    ```
+
+    At minimum you need:
+    - `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` — from your Supabase project → Settings → API
+    - `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` — same project, anon key
+    - `ANTHROPIC_API_KEY` — for AI features
+    - `ENCRYPTION_KEY` — random 32-byte hex string (`openssl rand -hex 32`)
+  </Step>
+
+  <Step title="Run the schema">
+    In your Supabase SQL editor, run the contents of `supabase/schema.sql`.
+  </Step>
+
+  <Step title="Start development">
+    ```bash
+    pnpm dev
+    ```
+
+    This starts the API on `:3000`, worker on `:3001`, and frontend on `:5173`.
+  </Step>
+</Steps>
+
+## Before submitting a PR
+
+- **Under 3 lines** — submit directly.
+- **Over 3 lines** — open an issue or discuss in [Discord](https://discord.gg/npa59RTgs) first. This avoids wasted effort if the approach doesn't fit the direction.
+
+## PR process
+
+1. Fork the repo and create a feature branch from `main`
+2. Make your changes
+3. Run `pnpm typecheck` and `pnpm lint` — fix any errors
+4. Submit a PR with a clear description of what and why
+5. Link any related issues
+
+## Code conventions
+
+- ESM throughout — no CommonJS `require()`
+- Named exports only — no default exports
+- No hardcoded secrets or API keys
+- No AI-generated PRs
+
+## Commit style
+
+```
+feat: add stakeholder map to get_contact response
+fix: identity resolution waterfall missing email-prefix fallback
+docs: add MCP tool examples for Python SDK
+```
+
+Types: `feat` · `fix` · `docs` · `refactor` · `test` · `chore`
+
+## Get help
+
+<CardGroup cols={2}>
+  <Card title="Discord" icon="discord" href="https://discord.gg/npa59RTgs">
+    Fastest way to get help — chat, screenshots, screen sharing.
+  </Card>
+  <Card title="GitHub Issues" icon="github" href="https://github.com/bennetglinder1/proply-crm/issues/new/choose">
+    For bug reports and feature requests.
+  </Card>
+</CardGroup>
