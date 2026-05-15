@@ -106,80 +106,44 @@
           {
             "group": "Contacts",
             "pages": [
-              {
-                "openapi": "GET /api/contacts"
-              },
-              {
-                "openapi": "POST /api/contacts"
-              },
-              {
-                "openapi": "GET /api/contacts/{id}"
-              },
-              {
-                "openapi": "PATCH /api/contacts/{id}"
-              },
-              {
-                "openapi": "DELETE /api/contacts/{id}"
-              },
-              {
-                "openapi": "POST /api/contacts/{id}/memories"
-              },
-              {
-                "openapi": "POST /api/contacts/import"
-              }
+              "public-api/contacts/list-contacts",
+              "public-api/contacts/create-contact",
+              "public-api/contacts/get-contact",
+              "public-api/contacts/update-contact",
+              "public-api/contacts/delete-contact",
+              "public-api/contacts/add-memory",
+              "public-api/contacts/import-contacts"
             ]
           },
           {
             "group": "Companies",
             "pages": [
-              {
-                "openapi": "GET /api/companies/list"
-              },
-              {
-                "openapi": "PATCH /api/companies/{id}"
-              },
-              {
-                "openapi": "POST /api/companies/enrich"
-              }
+              "public-api/companies/list-companies",
+              "public-api/companies/update-company",
+              "public-api/companies/enrich-company"
             ]
           },
           {
             "group": "Memories",
             "pages": [
-              {
-                "openapi": "GET /api/workspace-memories"
-              },
-              {
-                "openapi": "POST /api/workspace-memories/ingest"
-              },
-              {
-                "openapi": "PATCH /api/workspace-memories/{id}"
-              },
-              {
-                "openapi": "DELETE /api/workspace-memories/{id}"
-              }
+              "public-api/memories/list-memories",
+              "public-api/memories/ingest-memory",
+              "public-api/memories/update-memory",
+              "public-api/memories/delete-memory"
             ]
           },
           {
             "group": "Signals",
             "pages": [
-              {
-                "openapi": "POST /public/ingest"
-              }
+              "public-api/signals/ingest-signal"
             ]
           },
           {
             "group": "API Keys",
             "pages": [
-              {
-                "openapi": "GET /api/api-keys"
-              },
-              {
-                "openapi": "POST /api/api-keys"
-              },
-              {
-                "openapi": "DELETE /api/api-keys/{id}"
-              }
+              "public-api/api-keys/list-api-keys",
+              "public-api/api-keys/create-api-key",
+              "public-api/api-keys/delete-api-key"
             ]
           }
         ]
