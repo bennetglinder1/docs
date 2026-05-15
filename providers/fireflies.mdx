@@ -1,57 +1,34 @@
 ---
 title: Fireflies.ai
-description: Connect Fireflies with an API key for transcript search, and a webhook for real-time meeting events.
+description: Connect your Fireflies API key so Proply can search transcripts on demand.
 ---
 
 ## Overview
 
-Fireflies works in two ways inside Proply:
+Connecting Fireflies gives Proply access to your meeting transcripts. When a contact is looked up, the agent can pull relevant past meetings directly from Fireflies.
 
-1. **API key** — Proply can search and retrieve transcripts from Fireflies on demand (e.g. when a contact is looked up by the agent)
-2. **Webhook** — Fireflies pushes a notification when a meeting recording is ready; Proply logs a `meeting_held` activity on matched contacts
+For real-time meeting events (logging a `meeting_held` activity automatically when a recording is ready), see the [Fireflies webhook](/webhooks/fireflies).
 
-Both are independent — you can set up one or both.
+## Setup
 
-## API key setup
-
-### 1. Get your Fireflies API key
+### 1. Get your API key
 
 In Fireflies, go to **Integrations → API** and copy your API key.
 
 ### 2. Connect in Proply
 
-Go to **Settings → Integrations → Fireflies**, paste your API key, and click **Connect**. Proply verifies it by calling the Fireflies GraphQL API.
+Go to **Settings → Integrations → Fireflies**, paste your API key, and click **Connect**.
 
-Once connected, the Proply agent can search your meeting transcripts when looking up a contact.
+Proply verifies the key by calling the Fireflies GraphQL API. If the key is valid, you'll see your Fireflies account email confirmed.
 
-## Webhook setup
+## What this enables
 
-The webhook logs meetings automatically as they happen — no polling needed.
+Once connected, the Proply agent can:
 
-### 1. Get your webhook URL
+- Search transcripts by contact name or company
+- Pull meeting summaries into contact context
+- Answer questions like "what did we discuss with Acme Corp last month?"
 
-```
-https://api.yourdomain.com/inbound/fireflies/<YOUR_WORKSPACE_ID>
-```
+## Also set up the webhook
 
-### 2. Add in Fireflies
-
-Go to **Integrations → Webhooks** in Fireflies and add the URL above.
-
-### 3. Set the HMAC secret
-
-```bash
-FIREFLIES_WEBHOOK_SECRET=your-signing-secret
-```
-
-Restart the worker after updating.
-
-## What gets logged
-
-`meeting_held` on every matched participant contact.
-
-**Update-only** — Fireflies never creates new contacts from participants.
-
-## Webhook reference
-
-See [Fireflies webhook reference](/webhooks/fireflies) for full payload details.
+The API key integration is for on-demand lookups. To automatically log meetings as they happen, also configure the [Fireflies webhook →](/webhooks/fireflies)
