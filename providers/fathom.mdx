@@ -1,35 +1,44 @@
 ---
 title: Fathom
-description: Log meeting recordings from Fathom on contact timelines via webhook.
+description: Connect Fathom with an API key for transcript search, and a webhook for real-time meeting events.
 ---
 
 ## Overview
 
-Fathom sends a webhook when a meeting recording is ready. Proply receives it, matches the calendar invitees to existing contacts, and logs a `meeting_held` activity on each matched contact's timeline.
+Fathom works in two ways inside Proply:
 
-**Update-only** — Fathom never creates new contacts.
+1. **API key** — Proply can search and retrieve meeting summaries from Fathom on demand
+2. **Webhook** — Fathom pushes a notification when a recording is ready; Proply logs a `meeting_held` activity on matched contacts
 
-## Setup
+Both are independent — you can set up one or both.
+
+## API key setup
+
+### 1. Get your Fathom API key
+
+In Fathom, go to **Settings → Integrations → API** and generate an API key.
+
+### 2. Connect in Proply
+
+Go to **Settings → Integrations → Fathom**, paste your API key, and click **Connect**. Proply verifies it against the Fathom meetings endpoint.
+
+Once connected, the Proply agent can search your Fathom recordings when looking up a contact.
+
+## Webhook setup
+
+The webhook logs meetings automatically as they complete.
 
 ### 1. Get your webhook URL
 
-Your Fathom webhook endpoint is:
 ```
 https://api.yourdomain.com/inbound/fathom/<YOUR_WORKSPACE_ID>
 ```
 
-Find your workspace ID in **Settings → Workspace**.
+### 2. Add in Fathom
 
-### 2. Add the webhook in Fathom
-
-1. In Fathom, go to **Settings → Integrations → Webhooks**.
-2. Click **Add endpoint** and paste your URL.
-3. Select the **Recording ready** event.
-4. Copy the signing secret (starts with `whsec_`).
+Go to **Settings → Integrations → Webhooks** in Fathom, add the URL above, and select the **Recording ready** event. Copy the signing secret (starts with `whsec_`).
 
 ### 3. Set the signing secret
-
-Add it to `proply.env`:
 
 ```bash
 FATHOM_WEBHOOK_SECRET=whsec_your-signing-secret
@@ -39,15 +48,10 @@ Restart the worker after updating.
 
 ## What gets logged
 
-For each calendar invitee whose email matches a contact in your workspace:
+`meeting_held` on every matched calendar invitee contact.
 
-| Field | Value |
-|---|---|
-| Activity type | `meeting_held` |
-| Title | Meeting title from Fathom |
-| Summary | Fathom AI summary (first 500 chars) |
-| Source | `fathom` |
+**Update-only** — Fathom never creates new contacts from meeting participants.
 
 ## Webhook reference
 
-See [Fathom webhook reference](/webhooks/fathom) for full payload format and signature verification details.
+See [Fathom webhook reference](/webhooks/fathom) for full payload details and signature verification.
