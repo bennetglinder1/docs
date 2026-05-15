@@ -1,57 +1,40 @@
 ---
 title: Instantly
-description: Receive email sequence events from Instantly and create contacts from replies.
+description: Log email sequence events from Instantly.ai on contact timelines.
 ---
 
-## Overview
+## Connect via API Key
 
-Proply integrates with Instantly in two ways:
+<Steps>
+  <Step title="Open API settings in Instantly">
+    In Instantly go to **Settings → Integrations → API** and copy your API key.
 
-1. **Webhook** — Instantly pushes sequence events (replies, sends, opens, bounces) to Proply in real time
-2. **API key** — Proply can query your Instantly campaigns for context
+    <img src="/images/providers/instantly/step-1-api-key.png" alt="Copy Instantly API key" />
+  </Step>
 
-A **reply from a cold email creates a new contact** automatically. This is the core signal — someone replying to your outbound means they're a real prospect.
+  <Step title="Connect in Proply">
+    Go to **Settings → Integrations → + Add Integration → Instantly**, paste the key, and click **Connect**.
 
-## API key setup
+    <img src="/images/providers/instantly/step-2-connect.png" alt="Connect Instantly in Proply" />
+  </Step>
+</Steps>
 
-### 1. Get your Instantly API key
+## Set up the Webhook (recommended)
 
-In Instantly, go to **Settings → API Keys** and create a key.
+The webhook lets Proply log email events (opens, replies, bounces) in real time as they happen.
 
-### 2. Connect in Proply
+<Steps>
+  <Step title="Copy your webhook URL from Proply">
+    Go to **Settings → Integrations → Webhooks → Instantly** and copy the URL shown.
 
-Go to **Settings → Integrations → Instantly**, paste your API key, and click **Connect**. Proply verifies it against the Instantly API.
+    <img src="/images/providers/instantly/step-3-webhook-url.png" alt="Copy webhook URL from Proply" />
+  </Step>
 
-## Webhook setup
+  <Step title="Add the webhook in Instantly">
+    In Instantly go to **Settings → Integrations → Webhooks → Add Webhook**, paste the URL, and select the events you want.
 
-The webhook handles real-time sequence events — replies, opens, bounces.
+    <img src="/images/providers/instantly/step-4-add-webhook.png" alt="Add webhook in Instantly" />
+  </Step>
+</Steps>
 
-### 1. Get your webhook URL
-
-```
-https://api.yourdomain.com/inbound/instantly/<YOUR_WORKSPACE_ID>
-```
-
-### 2. Add the webhook in Instantly
-
-Go to **Settings → Integrations → Webhooks**, add your URL, and select events.
-
-### 3. Set the HMAC secret (production)
-
-```bash
-INSTANTLY_WEBHOOK_SECRET=your-signing-secret
-```
-
-## Events
-
-| Instantly event | Activity logged | Creates contact? |
-|---|---|---|
-| `reply_received` | `email_received` | **Yes** — reply = new prospect |
-| `email_sent` | `email_sent` | No |
-| `email_opened` | `email_opened` | No |
-| `email_bounced` | `email_bounced` | No |
-| `unsubscribed` | `email_bounced` | No |
-
-## Webhook reference
-
-See [Instantly webhook reference](/webhooks/instantly) for full payload format.
+See the [Instantly webhook reference](/webhooks/instantly) for the full event list.
