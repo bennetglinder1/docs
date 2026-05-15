@@ -1,82 +1,71 @@
 ---
 title: LinkedIn
-description: Sync LinkedIn messages and new connections via Unipile webhooks.
+description: Log connection requests, messages, and profile visits via Unipile.
 ---
 
-## Overview
-
-Proply receives LinkedIn events via [Unipile](https://unipile.com) — a LinkedIn API provider. You connect your LinkedIn account through Unipile, then manually register two webhooks in the Unipile dashboard pointing at your Proply instance.
-
-Messages and new connections are logged as `linkedin_message` and `linkedin_connection` activities on matching contacts. LinkedIn **creates new contacts** when a message or connection comes from someone not yet in your workspace.
-
-## Prerequisites
-
-- A Unipile account with a connected LinkedIn account
-- `UNIPILE_API_KEY` and `UNIPILE_DSN` set in `proply.env`
-
-## Setup
-
-### Step 1 — Connect LinkedIn in Proply
-
-Go to **Settings → Integrations → LinkedIn** and click **Connect**. You'll be redirected to Unipile's hosted OAuth flow to authorize your LinkedIn account.
-
-### Step 2 — Get your webhook URL
-
-Your LinkedIn webhook endpoint is:
-
-```
-https://api.yourdomain.com/inbound/linkedin?workspace_id=YOUR_WORKSPACE_ID&secret=YOUR_LINKEDIN_WEBHOOK_SECRET
-```
-
-- **`workspace_id`** — find this in **Settings → Workspace**
-- **`secret`** — must match `LINKEDIN_WEBHOOK_SECRET` in your `proply.env`
-
-Set the secret first:
-```bash
-# proply.env
-LINKEDIN_WEBHOOK_SECRET=any-random-string-you-choose
-```
-
-### Step 3 — Register two webhooks in Unipile
-
-In your Unipile dashboard, go to **Webhooks** and create **two separate webhooks**, both pointing to the same URL above:
-
-**Webhook 1 — Connections**
-- Scope: `connections` / All accounts
-- Event: **On new relation**
-- URL: your Proply webhook URL
-
-**Webhook 2 — Messages**
-- Scope: `messages` / All accounts
-- Events: **On new message** (select all message events you want)
-- URL: your Proply webhook URL
-
 <Note>
-  Both webhooks use the same URL — Proply reads the event type from the payload and routes accordingly.
+  LinkedIn has no official API for DMs. Proply uses [Unipile](https://unipile.com) as a middleware — you connect your LinkedIn account to Unipile, and Unipile forwards events to Proply via webhook.
 </Note>
 
-### Step 4 — Set env vars and restart
+## Server Setup
 
-```bash
-# proply.env
-UNIPILE_API_KEY=your-unipile-api-key
-UNIPILE_DSN=your-unipile-dsn-host
-LINKEDIN_WEBHOOK_SECRET=the-same-secret-from-step-2
-```
+<Steps>
+  <Step title="Create a Unipile account">
+    Sign up at [unipile.com](https://unipile.com). You need a paid plan to use the LinkedIn messaging API.
 
-Restart the worker after updating.
+    <img src="/images/providers/linkedin/step-1-signup.png" alt="Create Unipile account" />
+  </Step>
 
-## Events logged
+  <Step title="Get your API Key and DSN">
+    In the Unipile dashboard go to **Settings → API**. Copy your **API Key** and **DSN** (the webhook base URL).
 
-| Unipile event | Activity logged | Creates contact? |
-|---|---|---|
-| `new_relation` | `linkedin_connection` | Yes |
-| `message_received` | `linkedin_message` | Yes |
+    <img src="/images/providers/linkedin/step-2-api-key.png" alt="Copy Unipile API Key and DSN" />
+  </Step>
 
-## Environment variables
+  <Step title="Add to proply.env">
+    ```bash
+    UNIPILE_API_KEY=your-api-key
+    UNIPILE_DSN=your-dsn
+    LINKEDIN_WEBHOOK_SECRET=a-random-secret-string
+    ```
 
-| Variable | Description |
+    Restart your containers after saving.
+  </Step>
+
+  <Step title="Connect your LinkedIn account in Unipile">
+    In the Unipile dashboard go to **Accounts → Add account → LinkedIn** and follow the login flow.
+
+    <img src="/images/providers/linkedin/step-4-connect-account.png" alt="Connect LinkedIn in Unipile" />
+  </Step>
+
+  <Step title="Register the Connections webhook">
+    In Unipile go to **Webhooks → Add webhook**. Set:
+    - **Event:** On new relation
+    - **URL:**
+    ```
+    https://api.yourdomain.com/inbound/linkedin?workspace_id=YOUR_WORKSPACE_ID&secret=YOUR_LINKEDIN_WEBHOOK_SECRET
+    ```
+
+    <img src="/images/providers/linkedin/step-5-connections-webhook.png" alt="Register connections webhook" />
+  </Step>
+
+  <Step title="Register the Messages webhook">
+    Add a second webhook:
+    - **Event:** On new message
+    - **URL:** same URL as above
+
+    <img src="/images/providers/linkedin/step-6-messages-webhook.png" alt="Register messages webhook" />
+  </Step>
+</Steps>
+
+<Tip>
+  Find your Workspace ID in **Settings → Integrations → Webhooks** — the URL shown there already has it embedded.
+</Tip>
+
+## What gets logged
+
+| Event | Activity logged |
 |---|---|
-| `UNIPILE_API_KEY` | Your Unipile API key |
-| `UNIPILE_DSN` | Your Unipile DSN hostname (e.g. `api3.unipile.com:13005`) |
-| `LINKEDIN_WEBHOOK_SECRET` | Shared secret embedded in your webhook URL |
+| New connection accepted | `linkedin_connection` |
+| Inbound DM | `linkedin_message_received` |
+| Outbound DM | `linkedin_message_sent` |
