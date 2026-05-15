@@ -8,6 +8,7 @@
     "dark": "#1E3A8A"
   },
   "favicon": "/favicon.svg",
+  "openapi": "openapi.json",
   "navigation": {
     "tabs": [
       {
@@ -25,7 +26,10 @@
             "group": "Installation",
             "pages": [
               "installation/docker-compose",
-              "installation/development-environment"
+              "installation/docker",
+              "installation/helm",
+              "installation/development-environment",
+              "installation/dev-container"
             ]
           },
           {
@@ -34,60 +38,19 @@
               "providers/overview",
               "providers/add-new-provider",
               {
-                "group": "Communication",
+                "group": "Social Platforms",
                 "pages": [
-                  "providers/gmail",
-                  "providers/smtp",
+                  "providers/x-twitter",
                   "providers/linkedin",
-                  "providers/slack"
-                ]
-              },
-              {
-                "group": "Outbound",
-                "pages": [
-                  "providers/instantly"
-                ]
-              },
-              {
-                "group": "Meetings",
-                "pages": [
-                  "providers/google-calendar",
-                  "providers/fireflies",
-                  "providers/fathom",
-                  "providers/calendly"
-                ]
-              },
-              {
-                "group": "Intent Signals",
-                "pages": [
-                  "providers/rb2b"
-                ]
-              },
-              {
-                "group": "CRM",
-                "pages": [
-                  "providers/hubspot",
-                  "providers/pipedrive",
-                  "providers/attio"
-                ]
-              },
-              {
-                "group": "Enrichment",
-                "pages": [
-                  "providers/prospeo",
-                  "providers/apollo"
-                ]
-              },
-              {
-                "group": "Webhooks",
-                "pages": [
-                  "webhooks/overview",
-                  "webhooks/instantly",
-                  "webhooks/fireflies",
-                  "webhooks/fathom",
-                  "webhooks/rb2b",
-                  "webhooks/calendly",
-                  "webhooks/custom"
+                  "providers/facebook",
+                  "providers/instagram",
+                  "providers/youtube",
+                  "providers/tiktok",
+                  "providers/threads",
+                  "providers/bluesky",
+                  "providers/mastodon",
+                  "providers/reddit",
+                  "providers/pinterest"
                 ]
               }
             ]
@@ -106,44 +69,38 @@
           {
             "group": "Contacts",
             "pages": [
-              "public-api/contacts/list-contacts",
-              "public-api/contacts/create-contact",
-              "public-api/contacts/get-contact",
-              "public-api/contacts/update-contact",
-              "public-api/contacts/delete-contact",
-              "public-api/contacts/add-memory",
-              "public-api/contacts/import-contacts"
+              "public-api/contacts/list",
+              "public-api/contacts/get",
+              "public-api/contacts/activity",
+              "public-api/contacts/context",
+              "public-api/contacts/create",
+              "public-api/contacts/update",
+              "public-api/contacts/delete"
             ]
           },
           {
             "group": "Companies",
             "pages": [
-              "public-api/companies/list-companies",
-              "public-api/companies/update-company",
-              "public-api/companies/enrich-company"
+              "public-api/companies/get",
+              "public-api/companies/stakeholders"
             ]
           },
           {
             "group": "Memories",
             "pages": [
-              "public-api/memories/list-memories",
-              "public-api/memories/ingest-memory",
-              "public-api/memories/update-memory",
-              "public-api/memories/delete-memory"
+              "public-api/memories/list",
+              "public-api/memories/search",
+              "public-api/memories/create",
+              "public-api/memories/update",
+              "public-api/memories/delete",
+              "public-api/memories/remember",
+              "public-api/memories/search-post"
             ]
           },
           {
-            "group": "Signals",
+            "group": "Capture",
             "pages": [
-              "public-api/signals/ingest-signal"
-            ]
-          },
-          {
-            "group": "API Keys",
-            "pages": [
-              "public-api/api-keys/list-api-keys",
-              "public-api/api-keys/create-api-key",
-              "public-api/api-keys/delete-api-key"
+              "public-api/capture/log-activity"
             ]
           }
         ]
@@ -163,15 +120,46 @@
         "tab": "MCP",
         "groups": [
           {
-            "group": "MCP",
+            "group": "Overview",
             "pages": [
               "mcp/introduction"
+            ]
+          },
+          {
+            "group": "Contacts",
+            "pages": [
+              "mcp/tools/get-contact",
+              "mcp/tools/list-contacts",
+              "mcp/tools/create-contact",
+              "mcp/tools/update-contact",
+              "mcp/tools/delete-contact"
+            ]
+          },
+          {
+            "group": "Companies",
+            "pages": [
+              "mcp/tools/get-company"
+            ]
+          },
+          {
+            "group": "Memory",
+            "pages": [
+              "mcp/tools/remember",
+              "mcp/tools/get-memories",
+              "mcp/tools/search",
+              "mcp/tools/delete-memory"
+            ]
+          },
+          {
+            "group": "Signals",
+            "pages": [
+              "mcp/tools/track"
             ]
           }
         ]
       },
       {
-        "tab": "Developer App",
+        "tab": "Developer App (oAuth2)",
         "groups": [
           {
             "group": "Developer App",
@@ -197,7 +185,7 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/bennetglinder1/proply-crm",
+          "href": "https://github.com/bennetglinder1/docs",
           "icon": "github"
         },
         {
@@ -206,9 +194,9 @@
           "icon": "discord"
         },
         {
-          "anchor": "Waitlist",
-          "href": "https://goproply.com/waitlist",
-          "icon": "rocket"
+          "anchor": "YouTube",
+          "href": "https://youtube.com",
+          "icon": "youtube"
         }
       ]
     }
@@ -226,16 +214,27 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Join the waitlist",
-      "href": "https://goproply.com/waitlist"
+      "label": "Register to the cloud",
+      "href": "https://dashboard.mintlify.com"
     }
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/bennetglinder",
-      "github": "https://github.com/bennetglinder1/proply-crm",
-      "linkedin": "https://linkedin.com/company/proply"
+      "x": "https://x.com/mintlify",
+      "github": "https://github.com/mintlify",
+      "linkedin": "https://linkedin.com/company/mintlify"
     }
-  },
-  "openapi": "openapi.json"
+  }
 }

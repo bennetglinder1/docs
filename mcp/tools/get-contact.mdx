@@ -1,0 +1,59 @@
+---
+title: "get_contact"
+description: "Get everything known about a contact — the one tool to call before acting on any person"
+---
+
+Returns the full profile for a contact: identity fields, pipeline stage, AI-generated summary, recent activities (newest first), contact-level facts, and company-level facts. This is the primary lookup tool — call it before writing an email, preparing for a call, or making any decision about a contact.
+
+## Parameters
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | string | One of | Contact's email address |
+| `contact_id` | string | One of | Contact UUID — use if you already have it |
+
+Either `email` or `contact_id` must be provided.
+
+## Returns
+
+Formatted text block containing:
+
+- **Header**: name · title · company
+- **Scores**: pipeline stage, ICP score, deal health score, last seen date
+- **Summary**: AI-generated summary of the relationship
+- **Activities**: Recent touchpoints, newest first (type, date, description)
+- **Facts**: Stored facts scoped to this contact (category + content)
+- **Company facts**: Facts shared across everyone at the company
+- Footer with `contact_id` and `company_id`
+
+## Example
+
+```
+Alex Chen · VP of Engineering · Acme Corp
+Stage: evaluating  |  ICP: 87  |  Health: 72  |  Last seen: May 14
+
+Summary: High-intent buyer evaluating a vendor migration. Budget confirmed,
+currently running a 2-week technical evaluation alongside Salesforce.
+
+Activities (showing 3):
+  May 14 — email_sent: Sent proposal follow-up
+  May 12 — meeting_held: 30-min discovery call
+  May 8  — linkedin_connected
+
+Facts (showing 2):
+  [deal] Budget confirmed at $24k ARR
+  [preference] Prefers async communication over calls
+
+Company facts:
+  [deal] Acme is evaluating 3 vendors, decision by end of Q2
+
+(contact_id: a1b2c3d4-... · company_id: b2c3d4e5-...)
+```
+
+## When to call
+
+Call `get_contact` at the start of any task involving a specific person. It provides the full context an agent needs to act — stage, history, and stored facts — in a single call.
+
+<Tip>
+The underlying REST endpoint is `GET /v1/contacts/:id`. The MCP tool formats the raw data into a single text block optimised for agent prompts.
+</Tip>

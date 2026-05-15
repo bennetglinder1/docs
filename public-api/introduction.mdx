@@ -1,96 +1,80 @@
 ---
-title: API Overview
-description: Getting started with the Proply Public API
+title: "Public API"
+description: "REST API for AI agents, MCP servers, and external integrations. Base path: /v1"
 ---
 
 ## Authentication
 
-Generate an API key in **Settings → API**. Pass it as a Bearer token on every request:
+Every request requires a workspace API key. Generate one in **Settings → API Keys**.
 
-```bash
-curl -H "Authorization: Bearer YOUR_API_KEY" \
-  "https://api.yourdomain.com/api/contacts?workspaceId=YOUR_WORKSPACE_ID"
+Pass it in either header:
+
+```http
+X-API-Key: pk_live_xxxxxxxx
+```
+
+```http
+Authorization: Bearer pk_live_xxxxxxxx
 ```
 
 ## Base URL
 
-| Environment | Base URL |
-|---|---|
-| Self-hosted | `https://api.yourdomain.com/api` |
-| Local dev | `http://localhost:3000/api` |
-
-## Workspace ID
-
-Every request is scoped to a workspace. Pass `workspaceId` as a query param on GET requests, or in the request body on POST/PATCH.
-
-```bash
-# GET — query param
-GET /api/contacts?workspaceId=uuid
-
-# POST — request body
-POST /api/contacts
-{ "workspaceId": "uuid", ... }
+```
+https://api.goproply.com
 ```
 
-Find your workspace ID in **Settings → API** or from the URL when logged in.
+All endpoints are prefixed with `/v1`. Self-hosted users can point to their own instance by replacing this with their API domain.
 
 ## Errors
 
-All errors return JSON with a machine-readable code:
+All errors return JSON with an `error` field.
 
-```json
-{ "error": "error_code" }
-```
-
-| Code | Meaning |
-|---|---|
-| `workspace_id_required` | Missing `workspaceId` |
-| `workspace_not_found_or_unauthorized` | Invalid workspace or no access |
-| `contact_not_found` | Contact doesn't exist |
-| `contact_already_exists` | Duplicate email in workspace |
-| `invalid_email_format` | Email failed validation |
-| `internal_error` | Server error |
+| Status | Code | Meaning |
+|--------|------|---------|
+| `400` | `email_required` / `content_required` | Missing required field |
+| `401` | `api_key_required` / `invalid_api_key` | Auth failed |
+| `404` | `contact_not_found` / `company_not_found` | Resource not found |
+| `409` | `email_already_exists` | Duplicate on create |
+| `500` | `internal_error` | Server error |
 
 ## Quick examples
 
-### Create a contact
-
-```bash
-curl -X POST "https://api.yourdomain.com/api/contacts" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "workspaceId": "your-workspace-id",
-    "email": "john@acme.com",
-    "firstName": "John",
-    "lastName": "Smith",
-    "company": "Acme Corp"
-  }'
+<CodeGroup>
+```bash List contacts
+curl https://api.goproply.com/v1/contacts \
+  -H "X-API-Key: pk_live_xxxxxxxx"
 ```
 
-### Ingest a signal (custom capture)
-
-```bash
-curl -X POST "https://api.yourdomain.com/public/ingest" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "workspace_id": "your-workspace-id",
-    "token": "your-signal-hmac-secret",
-    "source": "website",
-    "email": "visitor@acme.com",
-    "company": "Acme Corp",
-    "page": "/pricing"
-  }'
+```bash Get context for an agent prompt
+curl "https://api.goproply.com/v1/contacts/alex@acmecorp.com/context" \
+  -H "X-API-Key: pk_live_xxxxxxxx"
 ```
 
-### Add a memory to a contact
-
-```bash
-curl -X POST "https://api.yourdomain.com/api/contacts/CONTACT_ID/memories" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+```bash Log a signal
+curl -X POST https://api.goproply.com/v1/capture \
+  -H "X-API-Key: pk_live_xxxxxxxx" \
   -H "Content-Type: application/json" \
-  -d '{
-    "content": "Mentioned they are evaluating tools for Q3",
-    "category": "General"
-  }'
+  -d '{"type":"proposal_viewed","email":"alex@acmecorp.com","description":"Opened proposal 3x"}'
 ```
+
+```bash Save a memory
+curl -X POST https://api.goproply.com/v1/remember \
+  -H "X-API-Key: pk_live_xxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Budget confirmed at $24k ARR","category":"deal","email":"alex@acmecorp.com"}'
+```
+</CodeGroup>
+
+## Identifier flexibility
+
+The `GET /v1/contacts/:id` endpoint (and several others) accepts either a UUID **or an email address**. AI agents that don't have the UUID can pass the email directly:
+
+```
+GET /v1/contacts/alex@acmecorp.com/context
+```
+
+## Pipeline stages
+
+Contact pipeline stages are: `identified` → `aware` → `interested` → `evaluating` → `client`
+
+Stages may advance automatically when you log activities via `POST /v1/capture` — a database trigger evaluates the signal and promotes the stage if thresholds are met.
