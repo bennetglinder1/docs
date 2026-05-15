@@ -1,41 +1,26 @@
 ---
 title: Attio
-description: Import your contacts from Attio into Proply using an API token.
+description: Connect Attio to sync contacts and records into Proply.
 ---
-
-## Overview
-
-Attio is a CRM import source. Connect with an API token to import people and companies from your Attio workspace. Proply does not write back to Attio after import.
 
 ## Setup
 
-### 1. Generate an Attio API key
+<Steps>
+  <Step title="Open API keys in Attio">
+    In Attio go to **Settings → API keys** and click **Create API key**.
 
-In Attio, go to **Settings → API Keys** and create a new key with **read** access to People and Companies.
+    <img src="/images/providers/attio/step-1-api-keys.png" alt="Open API keys in Attio" />
+  </Step>
 
-### 2. Connect in Proply
+  <Step title="Name and create the key">
+    Give it a name (e.g. "Proply") and click **Create**. Copy the key shown — it won't be shown again.
 
-Go to **Settings → Integrations → Attio**, paste your API key, and click **Connect**.
+    <img src="/images/providers/attio/step-2-create-key.png" alt="Create and copy Attio API key" />
+  </Step>
 
-Proply verifies the key against `GET /v2/self` before saving. If the key is invalid, connection fails immediately.
+  <Step title="Connect in Proply">
+    Go to **Settings → Integrations → + Add Integration → Attio**, paste the key, and click **Connect**.
 
-### 3. Import
-
-Click **Import contacts** to pull People records from Attio. Companies are imported as organization data attached to each person.
-
-## Deduplication
-
-Proply deduplicates on email address and Attio record ID. Re-running the import is safe — existing contacts are merged, not duplicated.
-
-## What's imported
-
-| Attio object | What Proply imports |
-|---|---|
-| People | Full name, email, phone, job title, LinkedIn URL |
-| Companies | Company name, domain, industry |
-
-## Limitations
-
-- Proply does not sync Attio deal stages or pipeline data
-- Custom Attio fields are not mapped (standard fields only)
-- Write-back is not supported — changes in Proply do not update Attio
+    <img src="/images/providers/attio/step-3-connect.png" alt="Connect Attio in Proply" />
+  </Step>
+</Steps>
