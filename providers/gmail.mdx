@@ -1,0 +1,71 @@
+---
+title: Gmail
+description: Sync sent and received emails from Gmail as activity signals on contact timelines.
+---
+
+## Overview
+
+Connect Gmail via Google OAuth and Proply polls your inbox and sent mail every 30 minutes, matching emails to existing contacts and logging them as `email_sent` / `email_received` activities.
+
+Connecting Gmail also enables **Google Calendar** sync automatically — the same OAuth token covers both.
+
+**Update-only** — Gmail never creates new contacts.
+
+## Setup
+
+### Step 1 — Register a Google OAuth app (self-hosted only)
+
+<Note>
+  On the cloud version, Google OAuth is pre-configured — skip to Step 2.
+</Note>
+
+1. Go to [console.cloud.google.com](https://console.cloud.google.com) and create a new project.
+2. Enable these APIs:
+   - **Gmail API**
+   - **Google Calendar API**
+3. Go to **APIs & Services → OAuth consent screen**. Set app name, add your domain, and add these scopes:
+   - `https://www.googleapis.com/auth/gmail.readonly`
+   - `https://www.googleapis.com/auth/calendar.readonly`
+4. Go to **APIs & Services → Credentials → Create Credentials → OAuth client ID**.
+   - Application type: **Web application**
+   - Authorized redirect URI: `https://api.yourdomain.com/api/oauth/google/callback`
+5. Copy the **Client ID** and **Client Secret**.
+
+Add to `proply.env`:
+
+```bash
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
+GOOGLE_OAUTH_REDIRECT_URI=https://api.yourdomain.com/api/oauth/google/callback
+```
+
+Restart the API after updating.
+
+### Step 2 — Connect in Proply
+
+Go to **Settings → Integrations → Gmail** and click **Connect**. Authorize with your Google account — make sure to grant both Gmail and Calendar permissions.
+
+<Warning>
+  If you only grant Gmail scope (not Calendar), calendar sync will not work. You'll need to disconnect and reconnect with both scopes.
+</Warning>
+
+### Step 3 — Done
+
+Proply starts syncing on the next 30-minute cycle. Gmail and Calendar both become active.
+
+## How it works
+
+Every 30 minutes, Proply fetches emails from the last 35 minutes (slightly overlapping to avoid gaps), matches `From` / `To` / `Cc` addresses against existing contacts, and logs:
+
+| Direction | Activity type |
+|---|---|
+| You → contact | `email_sent` |
+| Contact → you | `email_received` |
+
+## Environment variables
+
+| Variable | Description |
+|---|---|
+| `GOOGLE_CLIENT_ID` | OAuth app client ID |
+| `GOOGLE_CLIENT_SECRET` | OAuth app client secret |
+| `GOOGLE_OAUTH_REDIRECT_URI` | Must be `https://api.yourdomain.com/api/oauth/google/callback` |
