@@ -63,24 +63,19 @@
                   "providers/apollo",
                   "providers/signalbase"
                 ]
+              },
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "webhooks/overview",
+                  "webhooks/linkedin",
+                  "webhooks/instantly",
+                  "webhooks/fireflies",
+                  "webhooks/rb2b",
+                  "webhooks/calendly",
+                  "webhooks/custom"
+                ]
               }
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Webhooks",
-        "groups": [
-          {
-            "group": "Webhooks",
-            "pages": [
-              "webhooks/overview",
-              "webhooks/linkedin",
-              "webhooks/instantly",
-              "webhooks/fireflies",
-              "webhooks/rb2b",
-              "webhooks/calendly",
-              "webhooks/custom"
             ]
           }
         ]
