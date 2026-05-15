@@ -1,63 +1,74 @@
 ---
 title: Slack
-description: Sync Slack DMs with your contacts as activity signals.
+description: Pull DMs and channel messages into contact timelines automatically.
 ---
 
-## Overview
-
-Connect Slack via OAuth and Proply polls your direct messages every hour, matching DMs to existing contacts and logging them as `slack_message` activities on their timeline.
-
-**Update-only** — Slack never creates new contacts. DMs are only logged if the person's email matches an existing contact in your workspace.
-
-## Setup
-
-### 1. Register a Slack app (self-hosted only)
-
 <Note>
-  On the cloud version, Slack is pre-configured — skip to step 2.
+  Requires creating a Slack app. Done once by the server admin — users then connect their own Slack accounts via the UI.
 </Note>
 
-1. Go to [api.slack.com/apps](https://api.slack.com/apps) and create a new app.
-2. Under **OAuth & Permissions**, add these **User Token Scopes** (not Bot Scopes):
-   - `channels:history`
-   - `im:history`
-   - `im:read`
-   - `users:read`
-   - `users:read.email`
-3. Add your redirect URI: `https://api.yourdomain.com/api/oauth/slack/callback`
-4. Copy the **Client ID** and **Client Secret** into `proply.env`:
+## Server Setup
 
-```bash
-SLACK_CLIENT_ID=your-client-id
-SLACK_CLIENT_SECRET=your-client-secret
-SLACK_REDIRECT_URI=https://api.yourdomain.com/api/oauth/slack/callback
-```
+<Steps>
+  <Step title="Create a Slack app">
+    Go to [api.slack.com/apps](https://api.slack.com/apps) and click **Create New App → From scratch**. Give it a name and pick your workspace.
 
-### 2. Connect in Proply
+    <img src="/images/providers/slack/step-1-create-app.png" alt="Create a new Slack app" />
+  </Step>
 
-Go to **Settings → Integrations → Slack** and click **Connect**. You'll be redirected to Slack to authorize the app.
+  <Step title="Add OAuth scopes">
+    Go to **OAuth & Permissions → Scopes → User Token Scopes** and add:
 
-<Warning>
-  Proply needs a **user token** (xoxp-), not a bot token. Make sure to authorize as yourself, not as a bot.
-</Warning>
+    ```
+    channels:history
+    channels:read
+    im:history
+    im:read
+    mpim:history
+    users:read
+    users:read.email
+    ```
 
-### 3. Done
+    <img src="/images/providers/slack/step-2-scopes.png" alt="Add OAuth scopes" />
+  </Step>
 
-Proply starts polling your DMs on the next hourly cycle.
+  <Step title="Set the redirect URI">
+    Under **OAuth & Permissions → Redirect URLs**, add:
 
-## How it works
+    ```
+    https://api.yourdomain.com/api/oauth/slack/callback
+    ```
 
-Every hour, Proply:
+    <img src="/images/providers/slack/step-3-redirect-uri.png" alt="Set redirect URI" />
+  </Step>
 
-1. Lists all your direct message conversations
-2. Fetches messages from the last 2 hours
-3. Resolves the DM partner's email against your contacts
-4. Logs a `slack_message` activity for each matched DM
+  <Step title="Copy Client ID and Client Secret">
+    Go to **Basic Information → App Credentials** and copy your **Client ID** and **Client Secret**.
 
-## Environment variables
+    <img src="/images/providers/slack/step-4-credentials.png" alt="Copy Client ID and Client Secret" />
+  </Step>
 
-| Variable | Description |
-|---|---|
-| `SLACK_CLIENT_ID` | OAuth app client ID |
-| `SLACK_CLIENT_SECRET` | OAuth app client secret |
-| `SLACK_REDIRECT_URI` | Must be `https://api.yourdomain.com/api/oauth/slack/callback` |
+  <Step title="Add to proply.env">
+    ```bash
+    SLACK_CLIENT_ID=your-client-id
+    SLACK_CLIENT_SECRET=your-client-secret
+    SLACK_REDIRECT_URI=https://api.yourdomain.com/api/oauth/slack/callback
+    ```
+
+    Restart your containers after saving.
+  </Step>
+</Steps>
+
+## Connecting in Proply
+
+1. Go to **Settings → Integrations**
+2. Click **+ Add Integration → Slack**
+3. Complete the OAuth flow in the popup
+
+<img src="/images/providers/slack/connect-ui.png" alt="Connect Slack in Proply UI" />
+
+## What gets synced
+
+| Data | How | Frequency |
+|---|---|---|
+| Direct messages | Slack API (user token) | Every hour |
