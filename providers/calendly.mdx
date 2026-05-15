@@ -9,19 +9,16 @@ description: Log meeting bookings on contact timelines when someone schedules wi
   <Step title="Open API & Webhooks in Calendly">
     In Calendly go to **Integrations & apps → API & Webhooks**.
 
-    <img style={{width:"60%"}} src="/images/providers/calendly/step-1-api.png" alt="Open Calendly API settings" />
   </Step>
 
   <Step title="Create a Personal Access Token">
     Under **Personal Access Tokens** click **Generate new token**, give it a name, and copy the token shown.
 
-    <img style={{width:"60%"}} src="/images/providers/calendly/step-2-create-token.png" alt="Create Calendly Personal Access Token" />
   </Step>
 
   <Step title="Connect in Proply">
     Go to **Settings → Integrations → + Add Integration → Calendly**, paste the token, and click **Connect**.
 
-    <img style={{width:"60%"}} src="/images/providers/calendly/step-3-connect.png" alt="Connect Calendly in Proply" />
   </Step>
 </Steps>
 
@@ -31,13 +28,11 @@ description: Log meeting bookings on contact timelines when someone schedules wi
   <Step title="Copy your webhook URL from Proply">
     Go to **Settings → Integrations → Webhooks → Calendly** and copy the URL.
 
-    <img style={{width:"60%"}} src="/images/providers/calendly/step-4-webhook-url.png" alt="Copy webhook URL from Proply" />
   </Step>
 
   <Step title="Create a webhook subscription in Calendly">
     In Calendly go to **Integrations & apps → API & Webhooks → Webhook Subscriptions → New Webhook**. Paste the URL and select **invitee.created**.
 
-    <img style={{width:"60%"}} src="/images/providers/calendly/step-5-add-webhook.png" alt="Add webhook in Calendly" />
   </Step>
 </Steps>
 
