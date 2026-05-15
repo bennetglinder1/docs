@@ -5,34 +5,40 @@ description: Log email sequence events from Instantly.ai on contact timelines.
 
 ## Endpoint
 
+Your webhook URL is shown in **Settings → Integrations → Webhooks → Instantly**. It looks like:
+
 ```
-POST https://api.yourdomain.com/inbound/instantly/:workspaceId
+POST https://api.yourdomain.com/inbound/instantly/<your-workspace-id>
 ```
+
+Copy it directly from the UI — your workspace ID is already embedded.
 
 ## Auth
 
-Set `INSTANTLY_WEBHOOK_SECRET` in `proply.env`. Proply checks `x-proply-signature`.
+Set `INSTANTLY_WEBHOOK_SECRET` in `proply.env`. Proply validates the `x-proply-signature` header on every inbound request.
 
 ## Setup in Instantly
 
 1. In Instantly, go to **Settings → Integrations → Webhooks**.
-2. Add a new webhook with your endpoint URL.
-3. Select the events you want to receive.
+2. Click **Add Webhook** and paste your URL from Proply.
+3. Select the events you want (see table below).
 
 ## Supported events
 
-| Instantly event | Activity logged |
-|---|---|
-| `email_sent` | `email_sent` |
-| `reply_received` | `email_received` |
-| `email_replied` | `email_received` |
-| `email_opened` | `email_opened` |
-| `email_bounced` | `email_bounced` |
-| `unsubscribed` | `email_bounced` |
+| Instantly event | Activity logged | Creates contact? |
+|---|---|---|
+| `reply_received` | `email_received` | Yes |
+| `email_replied` | `email_received` | Yes |
+| `email_sent` | `email_sent` | No |
+| `email_opened` | `email_opened` | No |
+| `email_bounced` | `email_bounced` | No |
+| `unsubscribed` | `email_bounced` | No |
+
+Replies create a new contact if one doesn't exist yet — a reply to a cold email is a strong intent signal. All other events are update-only.
 
 ## Payload
 
-Proply reads these fields:
+Proply reads these fields from the Instantly payload:
 
 ```json
 {
@@ -46,10 +52,6 @@ Proply reads these fields:
   "message_id": "msg_abc123"
 }
 ```
-
-<Note>
-  Instantly is **update-only** — it never creates new contacts. Events are skipped if the email doesn't match an existing contact.
-</Note>
 
 ## Deduplication
 
