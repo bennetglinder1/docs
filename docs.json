@@ -98,9 +98,88 @@
         "tab": "Public API",
         "groups": [
           {
-            "group": "Public API",
+            "group": "Overview",
             "pages": [
               "public-api/introduction"
+            ]
+          },
+          {
+            "group": "Contacts",
+            "pages": [
+              {
+                "openapi": "GET /api/contacts"
+              },
+              {
+                "openapi": "POST /api/contacts"
+              },
+              {
+                "openapi": "GET /api/contacts/{id}"
+              },
+              {
+                "openapi": "PATCH /api/contacts/{id}"
+              },
+              {
+                "openapi": "DELETE /api/contacts/{id}"
+              },
+              {
+                "openapi": "POST /api/contacts/{id}/memories"
+              },
+              {
+                "openapi": "POST /api/contacts/import"
+              }
+            ]
+          },
+          {
+            "group": "Companies",
+            "pages": [
+              {
+                "openapi": "GET /api/companies/list"
+              },
+              {
+                "openapi": "PATCH /api/companies/{id}"
+              },
+              {
+                "openapi": "POST /api/companies/enrich"
+              }
+            ]
+          },
+          {
+            "group": "Memories",
+            "pages": [
+              {
+                "openapi": "GET /api/workspace-memories"
+              },
+              {
+                "openapi": "POST /api/workspace-memories/ingest"
+              },
+              {
+                "openapi": "PATCH /api/workspace-memories/{id}"
+              },
+              {
+                "openapi": "DELETE /api/workspace-memories/{id}"
+              }
+            ]
+          },
+          {
+            "group": "Signals",
+            "pages": [
+              {
+                "openapi": "POST /public/ingest"
+              }
+            ]
+          },
+          {
+            "group": "API Keys",
+            "pages": [
+              {
+                "openapi": "GET /api/api-keys"
+              },
+              {
+                "openapi": "POST /api/api-keys"
+              },
+              {
+                "openapi": "DELETE /api/api-keys/{id}"
+              }
             ]
           }
         ]
@@ -193,5 +272,6 @@
       "github": "https://github.com/bennetglinder1/proply-crm",
       "linkedin": "https://linkedin.com/company/proply"
     }
-  }
+  },
+  "openapi": "openapi.json"
 }
