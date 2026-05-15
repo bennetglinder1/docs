@@ -13,7 +13,6 @@ description: Pull DMs and channel messages into contact timelines automatically.
   <Step title="Create a Slack app">
     Go to [api.slack.com/apps](https://api.slack.com/apps) and click **Create New App → From scratch**. Give it a name and pick your workspace.
 
-    <img style={{width:"60%"}} src="/images/providers/slack/step-1-create-app.png" alt="Create a new Slack app" />
   </Step>
 
   <Step title="Add OAuth scopes">
@@ -29,7 +28,6 @@ description: Pull DMs and channel messages into contact timelines automatically.
     users:read.email
     ```
 
-    <img style={{width:"60%"}} src="/images/providers/slack/step-2-scopes.png" alt="Add OAuth scopes" />
   </Step>
 
   <Step title="Set the redirect URI">
@@ -39,13 +37,11 @@ description: Pull DMs and channel messages into contact timelines automatically.
     https://api.yourdomain.com/api/oauth/slack/callback
     ```
 
-    <img style={{width:"60%"}} src="/images/providers/slack/step-3-redirect-uri.png" alt="Set redirect URI" />
   </Step>
 
   <Step title="Copy Client ID and Client Secret">
     Go to **Basic Information → App Credentials** and copy your **Client ID** and **Client Secret**.
 
-    <img style={{width:"60%"}} src="/images/providers/slack/step-4-credentials.png" alt="Copy Client ID and Client Secret" />
   </Step>
 
   <Step title="Add to proply.env">
@@ -65,7 +61,6 @@ description: Pull DMs and channel messages into contact timelines automatically.
 2. Click **+ Add Integration → Slack**
 3. Complete the OAuth flow in the popup
 
-<img style={{width:"60%"}} src="/images/providers/slack/connect-ui.png" alt="Connect Slack in Proply UI" />
 
 ## What gets synced
 
