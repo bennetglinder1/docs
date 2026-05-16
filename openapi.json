@@ -24,17 +24,30 @@
       }
     },
     "schemas": {
+      "Fact": {
+        "type": "object",
+        "description": "A stored memory fact, scoped to a contact or their company.",
+        "properties": {
+          "scope": { "type": "string", "enum": ["contact", "company"], "description": "Whether this fact is about the person or their whole org" },
+          "category": { "type": "string", "description": "Logical grouping, e.g. General, Pricing, Motivation, Objection" },
+          "content": { "type": "string", "description": "The fact itself — one clear, reusable sentence" },
+          "graph_layer": { "type": "string", "enum": ["private", "public"], "description": "private = from your own interactions; public = from public signals" }
+        }
+      },
       "Contact": {
         "type": "object",
+        "description": "Contact profile returned by GET /v1/contacts/:id. The list endpoint (GET /v1/contacts) returns a subset without facts, activities, or company_details.",
         "properties": {
           "id": { "type": "string", "format": "uuid" },
           "email": { "type": "string", "format": "email" },
           "first_name": { "type": "string" },
           "last_name": { "type": "string" },
-          "name": { "type": "string" },
+          "name": { "type": "string", "description": "first_name + last_name, pre-joined" },
+          "title": { "type": "string", "description": "Job title (alias for job_title)" },
           "job_title": { "type": "string" },
           "phone": { "type": "string" },
           "linkedin_url": { "type": "string" },
+          "photo_url": { "type": "string" },
           "notes": { "type": "string" },
           "company": { "type": "string" },
           "company_id": { "type": "string", "format": "uuid" },
@@ -43,22 +56,57 @@
             "enum": ["identified", "aware", "interested", "evaluating", "client"]
           },
           "icp_score": { "type": "number", "minimum": 0, "maximum": 100 },
+          "icp_fit": { "type": "string", "description": "Qualitative ICP classification, e.g. strong_fit, potential_fit, weak_fit" },
           "deal_health_score": { "type": "number", "minimum": 0, "maximum": 100 },
           "last_activity_at": { "type": "string", "format": "date-time" },
-          "memory_summary": { "type": "string" }
+          "memory_summary": { "type": "string", "description": "AI-generated 2-sentence relationship summary. Refreshed automatically after new signals land." },
+          "facts": {
+            "type": "array",
+            "description": "Stored facts about this contact and their company, newest first. Only present on GET /v1/contacts/:id — not on list.",
+            "items": { "$ref": "#/components/schemas/Fact" }
+          },
+          "company_details": {
+            "type": "object",
+            "description": "Firmographic data for the contact's company. Only present on GET /v1/contacts/:id.",
+            "properties": {
+              "name": { "type": "string" },
+              "domain": { "type": "string" },
+              "industry": { "type": "string" },
+              "employee_count": { "type": "integer" },
+              "location": { "type": "string" }
+            }
+          },
+          "signals_30d": {
+            "type": "object",
+            "description": "Activity type → count for the last 30 days. Only present on GET /v1/contacts/:id.",
+            "additionalProperties": { "type": "integer" }
+          }
         }
       },
       "Company": {
         "type": "object",
         "properties": {
           "id": { "type": "string", "format": "uuid" },
+          "company_id": { "type": "string", "format": "uuid", "description": "Alias for id — always present in MCP tool output" },
           "name": { "type": "string" },
           "domain": { "type": "string" },
           "industry": { "type": "string" },
-          "size": { "type": "string" },
+          "employee_count": { "type": "integer" },
+          "deal_health_score": { "type": "number", "minimum": 0, "maximum": 100 },
           "description": { "type": "string" },
           "linkedin_url": { "type": "string" },
-          "website": { "type": "string" }
+          "website": { "type": "string" },
+          "contacts": {
+            "type": "array",
+            "description": "All contacts at this company with their stage and ICP score",
+            "items": { "$ref": "#/components/schemas/Contact" }
+          },
+          "total_contacts": { "type": "integer" },
+          "facts": {
+            "type": "array",
+            "description": "Company-level facts shared across all contacts at this org",
+            "items": { "$ref": "#/components/schemas/Fact" }
+          }
         }
       },
       "Memory": {
@@ -250,11 +298,12 @@
       "get": {
         "operationId": "getContactActivity",
         "summary": "Get contact activity",
-        "description": "Returns a tiered activity timeline. Full body for last 7 days, excerpts for 7–30 days, type+date only beyond 30 days.",
+        "description": "Returns raw activity log entries for a contact, newest first. Use `since` to bound the window — the MCP server passes `since=90d` to cap token usage.",
         "tags": ["Contacts"],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" }, "description": "Contact UUID or email" },
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50, "maximum": 100 } }
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50, "maximum": 100 } },
+          { "name": "since", "in": "query", "schema": { "type": "string", "format": "date-time" }, "description": "Only return activities at or after this ISO timestamp" }
         ],
         "responses": {
           "200": {
