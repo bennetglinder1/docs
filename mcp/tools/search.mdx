@@ -3,7 +3,7 @@ title: "search"
 description: "Semantic search across all stored facts in the workspace"
 ---
 
-Runs a semantic search across workspace memories. Returns the most relevant facts with similarity scores. Scope to a specific contact or company, or search workspace-wide.
+Runs a semantic search across workspace memories. Returns the most relevant facts ordered by similarity. Scope to a specific contact or company, or search workspace-wide.
 
 ## Parameters
 
@@ -18,11 +18,11 @@ Runs a semantic search across workspace memories. Returns the most relevant fact
 
 ```
 Search results for "budget" (2):
-  [deal] (May 12) [94%] Budget confirmed at $24k ARR
-  [deal] (May 8)  [71%] CFO mentioned budget review in June
+  [deal] · 4d ago  Budget confirmed at $24k ARR
+  [deal] · 8d ago  CFO mentioned budget review in June
 ```
 
-Each result shows: category, when it was stored, similarity score, and the fact content.
+Each result shows: category, relative age, and the fact content.
 
 ## When to call
 

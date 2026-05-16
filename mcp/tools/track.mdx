@@ -36,9 +36,29 @@ Use `track` for **what happened**. For **what you learned**, also call `remember
 
 ## Returns
 
+The response always confirms what was logged. If the DB trigger advanced the pipeline stage, that's reported too. A contextual next-step hint is appended based on the activity type:
+
 ```
-Logged `meeting_held`: "30-min discovery call, covered pricing and timeline".
+Logged `call_held`: "30-min discovery call, covered pricing and timeline".
+Stage advanced: interested → evaluating.
+Next: Call remember if you learned something worth keeping.
 ```
+
+```
+Logged `proposal_sent`: "Q2 outbound package — €1,200/mo".
+Next: Flag for follow-up if no reply in 3 days.
+```
+
+### Next-step hints by activity type
+
+| Activity | Hint |
+|----------|------|
+| `call_held`, `meeting_held` | Call `remember` if you learned something worth keeping |
+| `email_reply`, `linkedin_replied` | They replied — draft your response or update the pipeline stage |
+| `proposal_sent` | Flag for follow-up if no reply in 3 days |
+| `follow_up_sent` | Consider updating the pipeline stage if they're not engaging |
+| `trial_started` | High-intent signal — consider moving to evaluating stage |
+| `linkedin_connected` | Good opener — send an intro message |
 
 ## When to call
 
